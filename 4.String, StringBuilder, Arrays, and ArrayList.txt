@@ -1,0 +1,943 @@
+/*
+4. String, StringBuilder, Arrays, and ArrayList
+In the OCA Java SE 7 Programmer I exam, you’ll be asked many questions about how to
+create, modify, and delete String objects, StringBuilder objects, arrays, and Array-
+List objects.
+
+In this chapter, we’ll cover the following:
+ - Creating and manipulating String and StringBuilder objects
+ - Using common methods from class String and StringBuilder
+ - Creating and using one-dimensional and multidimensional arrays in single and multiple steps
+ - Accessing elements in asymmetric multidimensional arrays
+ - Declaring, creating, and using an ArrayList and understanding the advantages of an ArrayList over arrays
+ - Using methods that add, modify, and delete elements of an ArrayList
+ 
+4.1 Welcome to the world of the String class
+  In this section, we’ll cover the class String defined in the Java API in the java.lang
+  package. The String class represents character strings.
+
+4.1.1 Creating String objects
+  You can create objects of the class String by using the new operator, by using the
+  assignment operator (=), or by enclosing a value within double quotes ("). But you
+  may have noticed a big difference in how these objects are created, stored, and
+  referred by Java.
+*/
+  String str1 = new String("Paul");
+	String str2 = new String("Paul");
+	System.out.println(str1 == str2); //Prints false
+/*
+The operator == compares the addresses of the objects referred to by the variables.
+
+  @NOTE: String objects created using the assignment operator (=) are created in the pool
+  of String objects, those may refer to the same object if they store the same sequence of
+  characters. String objects created with a constructor aren't created in the pool of String objects.
+*/
+    String morning2 = new String("Morning");
+    System.out.println("Morning" == morning2);  //Prints false
+/*
+  The terms “String constant pool” and “String pool” are used interchangeably and refer to the same pool 
+  of String objects. Because String objects are immutable, the pool of String objects is also called the
+  “String constant pool.” You may see either of these terms on the exam.
+  
+  You can also invoke other overloaded constructors of class String to create its objects
+  by using the operator new:
+*/
+  String girl = new String("Shreya");                       //String constructor that accepts a String
+  char[] name = new char[]{'P','a','u','l'}; 
+  String boy = new String(name);                            //String constructor that accepts a char array
+	StringBuilder sd1 = new StringBuilder("String Builder");
+  String str5 = new String(sd1);                            //String constructor that accepts object of StringBuilder
+  StringBuffer sb2 = new StringBuffer("String Buffer");
+  String str6 = new String(sb2);                            //String constructor that accepts object of StringBuffer
+    
+//Because String is a class, you can assign null to it, as shown in the next example:
+  String empName = null;
+/*
+    *********************
+		*EXAM TIP: If a String object is created using the keyword new, it always results
+	    in the creation of a new String object. A new String object gets created
+		using the assignment operator (=) or double quotes only if a matching
+		String object with the same value isn’t found in the String constant pool.
+
+4.1.2 The class String is immutable
+  The concept that the class String is immutable is an important point to remember.
+  Once created, the contents of an object of the class String can never be modified.
+  The immutability of String objects helps the JVM reuse String objects, reducing
+  memory overhead and increasing performance.
+
+  Let’s take a quick look at how the immutability of class String is implemented by
+  the authors of this class:
+   - The class String stores its values in a private variable of the type char array
+     (char value[]). Arrays are fixed in size and don’t grow once initialized.
+   - This value variable is marked as final in the class String. Note that final is a
+     nonaccess modifier, and a final variable can be initialized only once.
+   - None of the methods defined in the class String manipulate the individual elements
+     of the array value.
+*/
+	 public final class String
+       implements java.io.Serializable, Comparable<String>, CharSequence
+    {
+      private final char value[];
+	  
+	  //The rest of the code of the class String
+    }
+/*
+STRING USES A CHAR ARRAY TO STORE ITS VALUE
+  The String value is stored in an array of type char. Remember that an array stores its first
+  value at position 0.
+
+STRING USES FINAL VARIABLE TO STORE ITS VALUE
+  The variable value, which is used to store the value of a String object, is marked as final. 
+  The basic characteristic of a final variable is that it can initialize a value only once.
+  
+METHODS OF STRING DON’T MODIFY THE CHAR ARRAY
+  Although we can’t reassign a value to a final char array we can reassign its individual characters.
+  All the methods defined in the class String, such as substring, concat, toLowerCase,
+  toUpperCase, trim, and so on, which seem to modify the contents of the String object on
+  which they’re called, create and return a new String object, rather than modifying the
+  existing value.
+
+        *********************
+		*EXAM TIP: Strings are immutable. Once initialized, a String value can’t be
+		modified. All the String methods that return a modified String value return
+		a new String object with the modified value. The original String value
+		always remains the same.
+
+4.1.3 Methods of the class String
+  String
+   + Query positions of char: charAt, indexOf, substring
+   + Seem to modify String:   substring, trim, replace
+   + Others:                  length, startsWith, endWith
+
+  CHARAT()
+  You can use the method charAt(int index) to retrieve a character at a specified
+  index of a String:
+*/
+    String name = new String("Paul");
+    System.out.println(name.charAt(0));
+    System.out.println(name.charAt(2));
+/*
+      @NOTE: As a quick introduction, a runtime exception is a programming error
+      determined by the Java Runtime Environment (JRE) during the execution of
+      code. These errors occur because of the inappropriate use of another piece
+      of code (exceptions are covered in detail in chapter 7). The previous code
+      tries to access a nonexistent index position, so it causes an exception.
+
+  INDEXOF()
+  You can search a String for the occurrence of a char or a String. If the specified
+  char or String is found in the target String, this method returns the first matching
+  position; otherwise, it returns -1:
+*/
+    String letters = "ABCAB";
+    System.out.println(letters.indexOf('B')); 
+    System.out.println(letters.indexOf("S")); 
+    System.out.println(letters.indexOf("CA"));
+/*
+  SUBSTRING()
+  The substring() method is shipped in two flavors. The first returns a substring of
+  a String from the position you specify to the end of the String, as in the following
+  example:
+*/
+    String exam = "Oracle";
+    String sub = exam.substring(2);
+    System.out.println(sub);
+/*
+  You can also specify the end position with this method:
+*/
+	String exam = "Oracle";
+	System.out.println(exam.substring(2));
+	System.out.println(exam.substring(2, 4));
+/*
+  An interesting point is that the substring method doesn’t include the character at the end position.
+
+        *********************
+		*EXAM TIP: The substring method doesn’t include the character at the end
+	    position in its return value.
+
+  TRIM()
+  The trim() method returns a new String by removing all the leading and trailing
+  white space in a String. White spaces are blanks (new lines, spaces, or tabs).
+*/  
+  String varWithSpaces = " AB CB ";
+	System.out.print(":");
+	System.out.print(varWithSpaces);  
+  System.out.println(":");  //Prints ": AB CB :"
+
+  System.out.print(":");
+  System.out.print(varWithSpaces.trim());
+  System.out.print(":");    //Prints ":AB CB:"
+/*
+  REPLACE()
+    This method will return a new String by replacing all the occurrences of a char with
+    another char. Instead of specifying a char to be replaced by another char, you can
+    also specify a sequence of characters—a String to be replaced by another String:
+*/
+	  String letters1 = "ABCAB";
+	  System.out.println(letters1.replace('B', 'b'));
+	  System.out.println(letters1.replace("CA", "12"));
+	  //System.out.println(letters1.replace('B', "b")); //Won't compile
+    //System.out.println(letters1.replace("B", 'b')); //Won't compile
+    System.out.println(letters1);
+/*
+	Again, notice that this method doesn’t—or can’t—change the value of the variable
+    letters. Examine the following line of code and its output:
+
+  LENGTH()
+    You can use the length() method to retrieve the length of a String. Here’s an example
+    showing its use:
+*/
+	  System.out.println("Shreya".length()); //Prints 6
+/*
+	  *********************
+		*EXAM TIP: The length of a String is one number greater than the position
+		that stores its last character. The length of String "Shreya" is 6, but its last
+		character, a, is stored at position 5 because the positions start at 0, not 1.
+
+  STARTSWITH() AND ENDSWITH()
+    The method startsWith() determines whether a String starts with a specified prefix,
+    specified as a String. You can also specify whether you wish to search from the start of
+    a String or from a particular position. This method returns true if a match is found
+    and false otherwise:
+*/
+	  String letters2 = "ABCAB";
+	  System.out.println(letters2.startsWith("AB"));
+	  System.out.println(letters2.startsWith("a"));
+    System.out.println(letters2.startsWith("A", 3));
+/*
+  METHOD CHAINING
+    It’s common practice to use multiple String methods in a single line of code, as follows:
+*/
+      String result = "Sunday ".replace(' ', 'Z').trim().concat("M n");
+      System.out.println(result);
+/*
+	The methods are evaluated from left to right. The first method to execute in this
+    example is replace, not concat.
+	
+		*********************
+		*EXAM TIP: When chained, the methods are evaluated from left to right.
+
+    Note that there’s a difference between calling a chain of methods on a String object
+    versus doing the same and then reassigning the return value to the same variable:
+*/
+	  String day = "SunDday";
+	  day.replace('D', 'Z').substring(3);
+      System.out.println(day); //Prints SunDday
+
+	  day = day.replace('D', 'Z').substring(3);
+      System.out.println(day); //Prints SunZday
+/*
+4.1.4 String objects and operators
+  Of all the operators that are on this exam, you can use just a handful with the
+  String objects:
+   - Concatenation: + and +=
+   - Equality: == and !=
+   
+  Concatenation operators (+ and +=) have a special meaning for Strings. The Java
+  language has additional functionality defined for these operators for String. You can
+  use the operators + and += to concatenate two String values.
+*/  
+    int num = 10;
+	  int val = 12;
+    String aStr = "OCJA";
+    String anotherStr = num + val + aStr;
+    System.out.println(anotherStr);  //Prints 22OCJA
+/*  
+  If you wish to treat the numbers stored in variables num and val as String values, modify
+  the expression as follows:
+*/
+  anotherStr = "" + num + val + aStr;
+	System.out.println(anotherStr);  //Prints 1012OCJA
+
+/***A practical tip on String concatenation*/
+	anotherStr = "" + (num + val) + aStr;
+	System.out.println(anotherStr);  //Prints 22OCJA
+
+/**Null values?*/
+  String lang = "Java";
+	lang += " is everywhere!";
+	System.out.println(lang); //Prints Java is everywhere!
+
+	String initializedToNull = null;
+	initializedToNull += "Java";
+    System.out.println(initializedToNull);
+/*
+4.1.5 Determining equality of Strings
+  The correct way to compare two String values for equality is to use the equals
+  method defined in the String class. This method returns a true value if the object
+  being compared to it isn’t null, is a String object, and represents the same sequence
+  of characters as the object to which it’s being compared.
+*/
+    String var1 = new String("Java");
+    String var2 = new String("Java");
+    System.out.println(var1.equals(var2)); //true
+    System.out.println(var1 == var2);      //false
+
+	  String var3 = "code";
+	  String var4 = "code";
+	  System.out.println(var3.equals(var4)); //true
+	  System.out.println(var3 == var4);      //true
+/*
+  The operator == compares whether the reference variables refer to the same objects, and the method equals compares 
+  the String values for equality. Always use the equals method to compare two Strings for equality. 
+  Never use the == operator for this purpose. 
+  
+  You can use the operator != to compare the inequality of objects referred to by the
+  String variables. It’s the inverse of the operator ==.
+*/
+    String var1 = new String("Java");
+    String var2 = new String("Java");
+    System.out.println(var1.equals(var2)); //true
+    System.out.println(var1 == var2);      //false
+    System.out.println(var1 != var2);      //true
+	
+	  String var3 = "code";
+	  String var4 = "code";
+	  System.out.println(var3.equals(var4)); //true
+	  System.out.println(var3 == var4);      //true
+	  System.out.println(var3 != var4);      //false
+/*
+4.2 Mutable strings: StringBuilder
+  The class StringBuilder is defined in the package java.lang and it has a mutable
+  sequence of characters. You must use class StringBuilder when you’re dealing with
+  larger strings or modifying the contents of a string often. Doing so will improve the performance
+  of your code.
+
+4.2.1 The StringBuilder class is mutable
+  In contrast to the class String, the class StringBuilder uses a non–final char array to store its value.
+
+4.2.2 Creating StringBuilder objects
+*/
+  class CreateStringBuilderObjects {
+  	public static void main(String args[]) {
+  	  StringBuilder sb1 = new StringBuilder();
+  	  StringBuilder sb2 = new StringBuilder(sb1);
+  	  StringBuilder sb3 = new StringBuilder(50);
+  	  StringBuilder sb4 = new StringBuilder("Shreya Gupta");
+  	}
+  }
+/*
+4.2.3 Methods of class StringBuilder
+  StringBuilder
+   + Query positions of char: charAt, indexOf, substring
+   + Modify String:           append, insert, delete, reverse
+   + Others:                  length, trimToSize, setLength
+   
+  Methods defined in the class StringBuilder work exactly like the versions in the class String—for example, 
+  methods such as charAt, indexOf, substring, and length.
+  
+  APPEND()
+    The append method adds the specified value at the end of the existing value of a
+    StringBuilder object. Because you may want to add data from multiple data types to
+    a StringBuilder object, this method has been overloaded so that it can accept data of
+    any type.
+	
+	This method accepts all the primitives—String, char array, and Object—as
+    method parameters, as shown in the following example:
+*/
+  	  class AppendStringBuilder {
+  	    public static void main(String args[]) {
+	      StringBuilder sb1 = new StringBuilder();
+	      sb1.append(true);
+	      sb1.append(10);
+	      sb1.append('a');
+	      sb1.append(20.99);
+	      sb1.append("Hi");
+	      System.out.println(sb1);
+	    }
+	  }
+/*
+  Because the method append also accepts a method parameter of type Object, you can
+  pass it any object from the Java API or your own user-defined object:
+*/    
+	class Person {
+		String name;
+		Person(String str) { name = str; }
+	}
+	class AppendStringBuilder2 {
+		public static void main(String args[]) {
+			StringBuilder sb1 = new StringBuilder();
+			sb1.append("Java");
+			sb1.append(new Person("Oracle"));
+			System.out.println(sb1);  //JavaPerson@126b249
+		}
+	}
+/*
+   	*********************
+		*EXAM TIP: For classes that haven’t overridden the toString method, the
+		append method appends the output from the default implementation of
+		method toString defined in class Object.
+
+	INSERT()
+	  The insert method is as powerful as the append method. It also exists in multiple
+	  flavors. The main difference between the append and insert methods is that the insert method
+	  enables you to insert the requested data at a particular position.
+	  
+			*********************
+			*EXAM TIP: Take note of the start and end positions when inserting a value in
+			a StringBuilder. Multiple flavors of the insert method defined in String-
+			Builder may confuse you because they can be used to insert either single or
+			multiple characters.
+
+	DELETE() AND DELETECHARAT()
+	  The method delete removes the characters in a substring of the specified String-
+	  Builder. The method deleteCharAt removes the char at the specified position.
+
+	TRIM()
+	  Unlike the class String, the class StringBuilder doesn’t define the method trim. An
+	  attempt to use it with this class will prevent your code from compiling.
+
+	REVERSE()
+	  As the name suggests, the reverse method reverses the sequence of characters of a
+	  StringBuilder
+*/
+		sb1 = new StringBuilder("0123456");
+		sb1.reverse();           //Prints 6543210
+		System.out.println(sb1);
+
+			*********************
+			*EXAM TIP: You can’t use the method reverse to reverse a substring of
+			StringBuilder.
+
+	REPLACE()
+	  Unlike the replace method defined in the class String, the replace method in the
+	  class StringBuilder replaces a sequence of characters, identified by their positions,
+	  with another String.
+
+		sb1 = new StringBuilder("0123456");
+		sb1.replace(2, 4, "ABCD");
+		//sb1.replace("123", "ABCD");  No suitable method found for StringBuilder replace(String, String);
+		System.out.println(sb1);
+
+	SUBSEQUENCE()
+	  Apart from using the method substring, you can also use the method subSequence
+	  to retrieve a subsequence of a StringBuilder object. This method returns objects of
+	  type CharSequence.
+
+		sb1 = new StringBuilder("0123456");
+		System.out.println(sb1.subSequence(2, 4));
+		System.out.println(sb1);
+
+	  **The method subsequence doesn’t modify the existing value of a StringBuilder object.
+
+4.2.4 A quick note on the class StringBuffer
+  Though the OCA Java SE 7 Programmer I exam objectives don’t mention the class
+  StringBuffer, you may see it in the list of (incorrect) answers in the OCA exam.
+  The classes StringBuffer and StringBuilder offer the same functionality, with
+  one difference: the methods of the class StringBuffer are synchronized where necessary,
+  whereas the methods of the class StringBuilder aren’t.
+  
+  When you work with the class StringBuffer, only one thread out of multiple threads
+  can execute your method. This arrangement prevents any inconsistencies in the values
+  of the instance variables that are modified by these (synchronized) methods. But
+  it introduces additional overhead, so working with synchronized methods and the
+  StringBuffer class affects the performance of your code.
+
+4.3 Arrays
+  Arrays are objects and refer to a collection of primitive data types or sother objects.
+
+	4.3.1 What is an array?
+	  An array is an object that stores a collection of values. The fact that an array itself is an
+	  object is often overlooked. I’ll reiterate: an array is an object itself, which implies that
+	  it stores references to the data it stores. Arrays can store two types of data:
+	   - A collection of primitive data types
+	   - A collection of objects
+	   
+	   class CreateArray {
+		 public static void main(String args[]) {
+		   int intArray[] = new int[] {4, 8, 107};
+		   String objArray[] = new String[] {"Harry", "Shreya", "Paul", "Selvan"};
+		}
+	  }
+
+	4.3.2 Array declaration
+	  An array declaration includes the array type and array variable.
+	  The number of bracket pairs indicates the depth of array nesting.
+	  
+		int intArray[];
+		String[] strArray;
+		int[] multiArray[];
+
+	  The array declaration only creates a variable that refers to null, as shown in figure 4.23.
+	  Because no elements of an array are created when it’s declared, it’s invalid to
+	  define the size of an array with its declaration. The following code won’t compile:
+	  
+		int intArray[2];      //Won't compile
+		String[5] strArray;   //Won't compile
+		int[2] multiArray[3]; //Won't compile
+
+	4.3.3 Array allocation
+	  As the name suggests, array allocation will allocate memory for the elements of an
+	  array. When you allocate memory for an array, you should specify its dimensions, such
+	  as the number of elements the array should store. Note that the size of an array can’t
+	  expand or reduce once it is allocated.
+	  
+		//Array Declaration
+		int intArray[];
+		String[] strArray;
+		int[] multiArr[];
+
+		//Allocate an array
+		intArray = new int[2];
+		strArray = new String[4];
+		multiArr = new int[2][3];
+		
+		strArray = new String[2*5];
+		int x = 10, y = 4;
+		strArray = new String[x*y];
+		strArray = new String[Math.max(2, 3)];
+
+		int[] multiArr[];
+		multiArr = new int[2][3];
+
+		multiArr = new int[2][];  //It's OK to define the size in only the first square brackets
+
+	  The size of the array should evaluate to an int value.
+		intArray = new int[2.4]; //Won't compile
+
+				*********************
+				*EXAM TIP: Once allocated, all the array elements store their default values. Elements
+				in an array that store objects default to null. Elements of an array that store
+				primitive data types store 0 for integer types (byte, short, int, long), 0.0 for decimal
+				types (float and double), false for boolean, or /u0000 for char data.
+
+	4.3.4 Array initialization
+	  You can initialize an array as follows:
+
+		int intArray[];
+		intArray = new int[2];
+		for (int i=0; i<intArray.length; i++) {
+		  intArray[i] = i + 5;
+		}
+		intArray[0] = 10;
+		intArray[1] = 1870;
+		
+		String[] strArray;
+		  strArray = new String[4];
+		  for (int i=0; i<strArray.length; i++) {
+			strArray[i] = new String("Hello" + i);
+		  }
+		strArray[1] = "Summer";
+		strArray[3] = "Winter";
+		strArray[0] = "Autumn";
+		strArray[2] = "Spring";
+		
+		int[] multiArr[];
+		multiArr = new int[2][3];
+		for (int i=0; i<multiArr.length; i++) {
+		  for (int j=0; j<multiArr[i].length; j++) {
+			multiArr[i][j] = i + j;
+		  }
+		}
+		multiArr[0][0] = 10;
+		multiArr[1][2] = 1210;
+		multiArr[0][1] = 110;
+		multiArr[0][2] = 1087;
+
+	4.3.5 Combining array declaration, allocation, and initialization
+	  You can combine all the previously mentioned steps of array declaration, allocation,
+	  and initialization into one step, as follows:
+
+		int intArray[] = {0, 1};
+		String[] strArray = {"Summer", "Winter"};
+		int multiArray[][] = { {0, 1}, {3, 4, 5} };
+		
+		int intArray2[] = new int[]{0, 1};
+		String[] strArray2 = new String[]{"Summer", "Winter"};
+		int multiArray2[][] = new int[][]{ {0, 1}, {3, 4, 5}};
+
+	4.3.6 Asymmetrical multidimensional arrays
+	  At the beginning of this section, I mentioned that a multidimensional array can be asymmetrical. 
+	  Arrays can define a different number of columns for each of its rows.
+		String multiStrArr[][] = new String[][]{{"A", "B"}
+												,null
+												,{"Jan", "Feb", "Mar"},
+											   };
+
+	4.3.7 Arrays of type interface, abstract class, and class Object
+	  In the section on array declaration, I mentioned that the type of an array can also be
+	  an interface or an abstract class. What values do elements of these arrays store? Let’s
+	  take a look at some examples.
+	  
+	  INTERFACE TYPE
+		If the type of an array is an interface, its elements are either null or objects that
+		implement the relevant interface type.
+		
+		  interface MyInterface {}
+		  class MyClass1 implements MyInterface {}
+		  class MyClass2 implements MyInterface {}
+		  class Test {
+			MyInterface[] interfaceArray = new MyInterface[]
+			{
+			  new MyClass1()
+			 ,null
+			 ,new MyClass2()
+			};
+		  }
+
+	  ABSTRACT CLASS TYPE
+		If the type of an array is an abstract class, its elements are either null or objects of
+		concrete classes that extend the relevant abstract class:
+
+		  abstract class Vehicle{}
+		  class Car extends Vehicle {}
+		  class Bus extends Vehicle {}
+		  class Test {
+			Vehicle[] vehicleArray = { new Car()
+									  ,new Bus(),
+									  ,null};
+		 }
+
+	  OBJECT
+		Because all classes extend the class java.lang.Object, elements of an array whose
+		type is java.lang.Object can refer to any object.
+		
+		  interface MyInterface {}
+		  class MyClass1 implements MyInterface {}
+		  abstract class Vehicle{}
+		  class Car extends Vehicle {}
+		  class Test {
+			Object[] objArray = new Object[] { new MyClass1()
+											  ,null
+											  ,new Car()
+											  ,new java.util.Date()
+											  ,new String("name"),
+											  ,new Integer [7]
+											 };
+		  }
+
+	4.3.8 Members of an array
+	  Array objects have the following public members:
+	   - length—The variable length contains the number of components of the array.
+	   - clone()—This method overrides the method clone defined in class Object but
+		 doesn’t throw checked exceptions. The return type of this method is the same as the
+		 array’s type. For example, for an array of type Type[], this method returns Type[].
+	   - Inherited methods—Methods inherited from the class Object, except the
+		 method clone.
+	   
+	   Note the correct combination of class and member used to access its length:
+		- String—Retrieve length using the method length()
+		- Array—Determine element count using the variable length
+		
+		  int intArray[];
+		  intArray = new int[] {0, 1};
+		  System.out.println(intArray.length);
+		  
+		  String strText = new String("0123456789");
+		  System.out.println(strText.length());
+
+4.4 ArrayList
+  In this section, I’ll cover how to use ArrayList, its commonly used methods, and the
+  advantages it offers over an array.
+  The OCA Java SE 7 Programmer I exam covers only one class from the Java Collection
+  API: ArrayList. The rest of the classes from the Java Collection API are covered in
+  the OCP Java SE 7 Programmer II exam (exam number 1Z0-804).
+
+  ArrayList is one of the most widely used classes from the Collections framework.
+  It offers the best combination of features offered by an array and the List data structure.
+  The most commonly used operations with a list are: add items to a list, modify
+  items in a list, delete items from a list, and iterate over the items.
+
+  Here are a few more important properties of an ArrayList:
+   - It implements the interface List.
+   - It allows null values to be added to it.
+   - It implements all list operations (add, modify, and delete values).
+   - It allows duplicate values to be added to it.
+   - It maintains its insertion order.
+   - You can use either Iterator or ListIterator (an implementation of the
+     Iterator interface) to iterate over the items of an ArrayList.
+   - It supports generics, making it type safe. (You have to declare the type of the
+     elements that should be added to an ArrayList with its declaration.)
+
+	4.4.1 Creating an ArrayList
+	  The following example shows you how to create an ArrayList:
+	  
+	  ArrayList<String> myArrayList = new ArrayList<>();
+	  
+		  @NOTE An ArrayList uses an array to store its elements. It provides you with
+		  the functionality of a dynamic array.
+
+	4.4.2 Adding elements to an ArrayList
+	Let’s start with adding elements to an ArrayList, as follows:
+
+	  import java.util.ArrayList;
+	  public class AddToArrayList {
+		public static void main(String args[]) {
+		  ArrayList<String> list = new ArrayList<>();
+		  list.add("one");
+		  list.add("two");
+		  list.add("four");
+		  list.add(2, "three");
+		}
+	  }
+
+	  PRACTICAL TIP Understanding how and why a class works in a particular
+	  manner will take you a long way, in regard to both the certification exam and
+	  your career. This understanding should help you retain the information for a
+	  longer time and help you answer questions in the certification exam that are
+	  looking to verify your practical knowledge of using this class. Last, but not
+	  least, the internal workings of a class will enable you to make informed decisions
+	  on using a particular class at your workplace and writing efficient code.
+
+	4.4.3 Accessing elements of an ArrayList
+	  Before we modify or delete the elements of an ArrayList, let’s see how to access them. 
+	  To access the elements of an ArrayList, you can either use Java’s enhanced for
+	  loop, Iterator, or ListIterator.
+
+		import java.util.ArrayList;
+		import java.util.ListIterator;
+
+		public class AccessArrayUsingListIterator{
+		  public static void main(String[] args){
+			ArrayList<String> myArrList = new ArrayList<>();
+			myArrList.add("one");
+			myArrList.add("three");
+			myArrList.add("four");
+			myArrList.add(1,"two");
+	  
+			//Access(1)
+			System.out.println(":::for loop:::");
+			for(String index : myArrList){
+				System.out.println(index);
+			}
+
+			//Access(2)
+			System.out.println();
+			System.out.println(":::ListIterator:::");
+			ListIterator<String> iterator = myArrList.listIterator();
+			while(iterator.hasNext() ){
+				System.out.println(iterator.next());
+			}
+	  
+		  }
+		}
+
+					*********************
+					*EXAM TIP: An ArrayList preserves the order of insertion of its elements.
+					Iterator, ListIterator, and the enhanced for loop will return the elements
+					in the order in which they were added to the ArrayList. An iterator
+					(Iterator or ListIterator) lets you remove elements as you iterate an
+					ArrayList. It’s not possible to remove elements from an ArrayList while
+					iterating it using a for loop.
+
+	4.4.4 Modifying the elements of an ArrayList
+	  You can modify an ArrayList by either replacing an existing element in ArrayList or
+	  modifying all of its existing values. The following code uses the set method to replace
+	  an element in an ArrayList:
+
+		ArrayList<StringBuilder> iArrList = new ArrayList<>();
+		iArrList.add(new StringBuilder("one"));
+		iArrList.add(new StringBuilder("three"));
+		iArrList.add(new StringBuilder("four"));
+		iArrList.add(1, new StringBuilder("two"));
+
+		//Set(1)
+		iArrList.set(1, new StringBuilder("One and a Half"));
+
+		for(StringBuilder index : iArrList){
+		  index.append(index.length());
+		}
+
+
+		//Access via ListIterator
+		ListIterator<StringBuilder> iterator = iArrList.listIterator();
+		while(iterator.hasNext()){
+		   System.out.println(iterator.next());
+		}
+		
+	4.4.5 Deleting the elements of an ArrayList
+	  ArrayList defines two methods to remove its elements, as follows:
+	   - remove(int index)—This method removes the element at the specified position in this list.
+	   - remove(Object o)—This method removes the first occurrence of the specified element from this list, if it’s present.
+
+		   ArrayList<StringBuilder> iArrList = new ArrayList<>();
+
+		   StringBuilder sb1 = new StringBuilder("One");
+		   StringBuilder sb2 = new StringBuilder("Two");
+		   StringBuilder sb3 = new StringBuilder("Three");
+		   StringBuilder sb4 = new StringBuilder("Four");
+
+		   iArrList.add(sb1);
+		   iArrList.add(sb2);
+		   iArrList.add(sb3);
+		   iArrList.add(sb4);
+
+		   iArrList.remove(1);
+
+	4.4.6 Other methods of ArrayList
+	  Let’s briefly discuss the other important methods defined in ArrayList.
+	  
+	  ADDING MULTIPLE ELEMENTS TO AN ARRAYLIST
+	  You can add multiple elements to an ArrayList from another ArrayList or any other
+	  class that is a subclass of Collection by using the following overloaded versions of
+	  method addAll:
+
+	   - addAll(Collection<? extends E> c)
+	   - addAll(int index, Collection<? extends E> c)
+		 
+		 ArrayList<String> myArrList = new ArrayList<String>();
+		 myArrList.add("One");
+		 myArrList.add("Two");
+		 
+		 ArrayList<String> yourArrList = new ArrayList<String>();
+		 yourArrList.add("Three");
+		 yourArrList.add("Four");
+		 
+		 myArrList.addAll(1, yourArrList);
+		 for (String val : myArrList)
+		   System.out.println(val);
+
+					*********************
+					*EXAM TIP: In the exam, you’re likely to encounter a question that adds the same object reference
+					to multiple lists and then tests you on your understanding of the state
+					of the same object and reference variable in all the lists.
+
+		  @NOTE: You can always override the equals method in your own class to change this default behavior.
+
+	  CLEARING ARRAYLIST ELEMENTS
+	  You can remove all the ArrayList elements by calling clear on it.
+	   
+		ArrayList<String> myArrList = new ArrayList<String>();
+		myArrList.add("One");
+		myArrList.add("Two");
+		myArrList.clear();
+		for (String val:myArrList)
+		  System.out.println(val
+
+	ACCESSING INDIVIDUAL ARRAYLIST ELEMENTS
+	  In this section, we’ll cover the following methods for accessing elements of an ArrayList:
+	   - get(int index)—This method returns the element at the specified position in this list.
+	   - size()—This method returns the number of elements in this list.
+	   - contains(Object o)—This method returns true if this list contains the specified element.
+	   - indexOf(Object o)—This method returns the index of the first occurrence of
+		 the specified element in this list, or –1 if this list doesn’t contain the element.
+	   - lastIndexOf(Object o)—This method returns the index of the last occurrence
+		 of the specified element in this list, or –1 if this list doesn’t contain the element.
+		 
+						*********************
+						*EXAM TIP: An ArrayList can accept duplicate object values.
+
+	CLONING AN ARRAYLIST
+	  The method clone defined in the class ArrayList returns a shallow copy of this Array-
+	  List instance. "Shallow copy" means that this method creates a new instance of the
+	  ArrayList object to be cloned. Its element references are copied, but the objects
+	  themselves are not.
+
+
+	CREATING AN ARRAY FROM AN ARRAYLIST
+	You can use the method toArray to return an array containing all of the elements in
+	an ArrayList in sequence from the first to the last element. As mentioned earlier in
+	this chapter (refer to figure 4.27 in section 4.4.1), an ArrayList uses a private variable,
+	'elementData' (an array), to store its own values. Method toArray doesn’t return
+	a reference to this array. It creates a new array, copies the elements of the ArrayList
+	to it and then returns it.
+
+
+4.5 Comparing objects for equality
+In section 4.1, you saw how the class String defined a set of rules to determine
+whether two String values are equal, and how these rules were coded in the method
+equals. Similarly, any Java class can define a set of rules to determine whether its two
+objects should be considered equal. This comparison is accomplished using the
+method equals, which is described in the next section.
+
+4.5.1 The method equals in the class java.lang.Object
+  The method equals is defined in class java.lang.Object. All of the Java classes
+  directly or indirectly inherit from this class.
+
+    //Implementation of equals method from the class java.lang.Object  
+	public boolean equals(Object obj) {
+      return (this == obj);
+    }
+
+  As you can see, the default implementation of the equals method only compares whether 
+  two object variables refer to the same object.
+
+4.5.2 Comparing objects of a user-defined class
+  Let’s work with an example of class BankAccount, which defines two instance variables:
+  acctNumber, of type String, and acctType, of type int. The equals method compares
+  the values of these instance variables to determine the equality of two objects of class
+  BankAccount.
+
+  class BankAccount {
+    String acctNumber;
+    int acctType;
+    public boolean equals(Object anObject) {
+      if (anObject instanceof BankAccount) {
+	    BankAccount b = (BankAccount)anObject;
+		return (acctNumber.equals(b.acctNumber) && acctType == b.acctType);
+      }else
+	    return false;
+    }
+  }
+  
+  Let’s verify the working of this equals method in the following code:
+
+    class Test {
+      public static void main(String args[]) {
+        BankAccount b1 = new BankAccount();
+        b1.acctNumber = "0023490";
+        b1.acctType = 4;
+		
+        BankAccount b2 = new BankAccount();
+        b2.acctNumber = "11223344";
+        b2.acctType = 3;
+		
+        BankAccount b3 = new BankAccount();
+        b3.acctNumber = "11223344";
+        b3.acctType = 3;
+
+		System.out.println(b1.equals(b2));
+        System.out.println(b2.equals(b3));
+        System.out.println(b1.equals(new String("abc")));
+      }
+    }
+
+						*********************
+						*EXAM TIP: In the exam, watch out for questions about the correct implementation
+						of the equals method to compare two objects versus questions about
+						the equals methods that simply compile correctly. If you’d been asked whether
+						equals() in the previous example code would compile correctly, the correct
+						answer is yes.
+
+4.5.3 Incorrect method signature of the equals method
+It’s a very common mistake to write an equals method that accepts a member of the
+class itself. In the following code, the only change is in the type of method parameter:
+
+  class BankAccount {
+    String acctNumber;
+    int acctType;
+    public boolean equals(BankAccount anObject) {
+      if (anObject instanceof BankAccount) {
+        BankAccount b = (BankAccount)anObject;
+        return (acctNumber.equals(b.acctNumber) &&
+        acctType == b.acctType);
+      }else
+        return false;
+    }
+  }
+						*********************
+						*EXAM TIP: The method equals defines a method parameter of type Object,
+						and its return type is boolean. Don’t change the name of the method, its
+						return type, or the type of method parameter when you define (override) this
+						method in your class to compare two objects.
+
+4.5.4 Contract of the equals method
+  The Java API defines a contract for the equals method, which should be taken care of
+  when you implement it in any of your classes. I’ve pulled the following contract explanation
+  directly from the Java API documentation:
+    - The equals method implements an equivalence relation on non-null object references:
+    - It is reflexive: for any non-null reference value x, x.equals(x) should return true.
+    - It is symmetric: for any non-null reference values x and y, x.equals(y)
+      should return true if and only if y.equals(x) returns true.
+    - It is transitive: for any non-null reference values x, y, and z, if x.equals(y)
+      returns true and y.equals(z) returns true, then x.equals(z) should return true.
+    - It is consistent: for any non-null reference values x and y, multiple invocations
+      of x.equals(y) consistently return true or consistently return false, provided
+      no information used in equals() comparisons on the objects is modified.
+    - For any non-null reference value x, x.equals(null) should return false.
+
+						*********************
+						*EXAM TIP: You may get to answer explicit questions on the contract of the
+						equals method. An equals method that returns true for a null object passed
+						to it will violate the contract. Also, if the equals method modifies the value of
+						any of the instance variables of the method parameter passed to it, or of the
+						object on which it is called, it will violate the equals contract.

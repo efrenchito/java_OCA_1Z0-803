@@ -1,0 +1,855 @@
+In the exam, you must answer questions about methods and encapsulation.
+
+This chapter will help you get the correct answers by covering the following:
+ -Defining the scope of variables
+ -Explaining an object’s life cycle
+ -Creating methods with primitive and object arguments and return values
+ -Creating overloaded methods and constructors
+ -Reading and writing to object fields
+ -Calling methods on objects
+ -Applying encapsulation principles to a class
+ 
+We’ll start the chapter by defining the scope of the variables; we’ll then cover the class
+constructors, including the differences between user-defined and default constructors
+and the ways in which they’re useful.
+
+3.1 Scope of variables
+  In this section, we’ll cover the scopes of the variables and the domains in which they’re accessible. 
+  Here are the available scopes of variables:
+
+   - Local variables (also known as method-local variables)
+   - Method parameters (also known as method arguments)
+   - Instance variables (also known as attributes, fields, and nonstatic variables)
+   - Class variables (also known as static variables)
+
+	3.1.1 Local variables
+	  Local variables are defined within a method.
+	  The scope of a local variable depends on the location of its declaration within a
+	  method. The scope of local variables defined within a loop, if-else, or switch
+	  construct or within a code block (marked with {}) is limited to these constructs.
+	  Local variables defined outside any of these constructs are accessible across the
+	  complete method.
+
+	  @NOTE The life span of a variable is determined by its scope. If the scope of a
+	  variable is limited to a method, its life span is also limited to that method. You
+	  may notice that these terms are used interchangeably.
+
+		*********************
+		*EXAM TIP: The local variables topic is a favorite of OCA Java SE 7 Programmer
+		I exam authors. You’re likely to be asked a question that seems to be about a
+		rather complex topic, such as inheritance or exception handling, but in fact
+		it’ll be testing your knowledge on the scope of a local variable.
+
+	3.1.2 Method parameters
+	  The variables that accept values in a method are called method parameters.
+	  They’re accessible only in the method that defines them.
+
+	3.1.3 Instance variables
+	  Instance is another name for an object. Hence, an instance variable is available for the life
+	  of an object. An instance variable is declared within a class, outside of all of the methods.
+	  It’s accessible to all the nonstatic methods defined in a class.
+
+		*********************
+		*EXAM TIP: The scope of an instance variable is longer than that of a local variable
+		or a method parameter.
+
+	3.1.4 Class variables
+	  A class variable is defined by using the keyword static. A class variable belongs to a
+	  class, not to individual objects of the class. A class variable is shared across all objects—
+	  objects don’t have a separate copy of the class variables.
+	  A class variable is accessible by using the name of the class of an object.
+	  
+	COMPARING THE USE OF VARIABLES IN DIFFERENT SCOPES
+	 - Local variables are defined within a method and are normally used to store the
+	   intermediate results of a calculation.
+	 - Method parameters are used to pass values to a method. These values can be
+	   manipulated and may also be stored as the state of an object by assigning them
+	   to instance variables.
+	 - Instance variables are used to store the state of an object. These are the values
+	   that need to be accessed by multiple methods.
+	 - Class variables are used to store values that should be shared by all the objects
+	   of a class.
+
+		*********************
+		*EXAM TIP: Different local variables can have different scopes. The scope of
+		local variables may be shorter than or as long as the scope of method parameters.
+		The scope of local variables is less than the duration of a method if
+		they’re declared in a sub-block (within braces {}) in a method. This sub-block
+		can be an if statement, a switch construct, a loop, or a try-catch block
+
+	VARIABLES WITH THE SAME NAME IN DIFFERENT SCOPES
+	  The fact that the scopes of variables overlap results in interesting combinations of variables
+	  within different scopes but with the same names. Some rules are necessary to prevent conflicts.
+	   - Class Variables/Instance Variables can't have the same name
+	   - Local Variables/Parametes Varaiables can't have the same name
+
+3.2 Object’s life cycle
+  The OCA Java SE 7 Programmer I exam will test your understanding of how to determine
+  when an object is or isn’t accessible. The exam also tests your ability to determine
+  the total number of objects that are accessible at a particular line of code. Primitives
+  aren’t objects, so they’re not relevant in this section.
+  
+  An object’s life cycle starts when it’s created and lasts until it goes out of its scope
+  or is no longer referenced by a variable. When an object is accessible, it can be referenced
+  by a variable and other classes can use it by calling its methods and accessing its
+  variables. I’ll discuss these stages in detail in the following subsections.
+  
+	3.2.1 An object is born
+	  Note the difference between declaring a variable and initializing it.
+	  An object comes into the picture when you use the keyword operator new. 
+	  You can initialize a reference variable with this object. 
+	  What happens when you create a new object without assigning it to any reference variable?
+	   - That's call an unreferenced object
+	  
+	  class Person {}
+	  class ObjectLifeCycle{
+	     Person person;                  //Declaring a reference variable                  "A leash without a dog"
+	     Person person1 = new Person();  //Declaring and initializing a reference variable "A leashed dog"
+	   
+	     ObjectLifeCycle(){
+		    new Person();                //An unreferenced object                          "A dog without a leash"
+	     }
+	  }
+	  
+			*********************
+			*EXAM TIP: Watch out for a count of the total objects created in any given
+			code—the ones that can be accessed using a variable and the ones that can’t
+			be accessed using any variable. The exam may question you on the count of
+			objects created.
+
+	3.2.2 Object is accessible
+	  Once an object is created, it can be accessed using its reference variable. It remains accessible
+	  until it goes out of scope or its reference variable is explicitly set to null. Also, if you
+	  reassign another object to an initialized reference variable, the previous object becomes
+	  inaccessible.
+
+	  class Exam {
+		String name;
+		public void setName(String newName) {
+		  name = newName;
+		}
+	  }
+	  class ObjectLife1 {
+		public static void main(String args[]) {
+		  Exam myExam = new Exam();
+		  myExam.setName("OCA Java Programmer 1");
+		  myExam = null;
+		  myExam = new Exam();
+		  myExam.setName("PHP");
+		}
+	  }
+	  ***The previous example creates two objects of class Exam using the same reference variable myExam.
+
+	3.2.3 Object is inaccessible
+	  In the previous section, you learned that an object can become inaccessible if it can
+	  no longer be referenced by any variable. An object can also become inaccessible if it
+	  goes out of scope:  
+	  
+		*********************
+		*EXAM TIP: An object is marked as eligible to be garbage collected when it can
+		no longer be accessed, which can happen when the object goes out of scope.
+		It can also happen when an object’s reference variable is assigned an explicit
+		null value or is reinitialized.
+		
+	  public void myMethod() {
+		int result = 88;
+		if (result > 78) {
+		  Exam myExam1 = new Exam();
+		  myExam1.setName("Android");
+		}else {
+		  Exam myExam2 = new Exam();
+		  myExam2.setName("MySQL");
+		}
+	  }
+
+	  In the OCA Java SE 7 Programmer I exam, you’re likely to answer questions on garbage
+	  collection for code that has multiple variable declarations and initializations.  
+	  The exam may query you on the total number of objects that are eligible for garbage
+	  collection after a particular line of code.
+	  
+			*********************
+			*EXAM TIP: You can be sure only about which objects are marked for garbage collection.
+			You can never be sure exactly when the object will be garbage collected.
+
+3.3 Create methods with arguments and return values
+  In this section, you’ll work with the definitions of methods, which may or may not
+  accept input parameters and may or may not return any values.
+
+  A method is a group of statements identified with a name. Methods are used to define
+  the behavior of an object. A method can perform different functions.
+
+  In the following subsections, you’ll learn about the components of a method:
+   - Return type
+   - Method parameters
+   - return statement
+   - Access modifiers (covered in chapter 1)
+   - Nonaccess modifiers (covered in chapter 1)
+
+3.3.1 Return type of a method
+  The return type of a method states the type of value that a method will return.
+  A method may or may not return a value. One that doesn’t return a value has a
+  return type of void. A method can return a primitive value or an object of any class.
+  The name of the return type can be any of the eight primitive types defined in Java,
+  the name of any class, or an interface.
+
+			*********************
+			*EXAM TIP: You can optionally assign the value returned by a method to a variable.
+            If you don’t assign the returned value from a method, it’s neither a compilation
+            error nor a runtime exception.
+
+  class EJavaTestMethods2 {
+	public static void main(String args[]) {
+	  Phone p = new Phone();
+	  p.getWeight();
+	}
+  }
+
+  The variable you use to accept the returned value from a method must be compatible
+  with the returned value.
+
+	class EJavaTestMethods2 {
+	  public static void main(String args[]) {
+	    Phone p = new Phone();
+	    double newWeight  = p.getWeight();
+	    int    newWeight2 = p.getWeight();
+	  }
+	}
+
+3.3.2 Method parameters
+  Method parameters are the variables that appear in the definition of a method and specify
+  the type and number of values that a method can accept.
+
+  A method may accept zero or multiple method arguments.
+    double calcAverage(int marks1, int marks2) {
+      double avg = 0;
+      avg = (marks1 + marks2)/2.0;
+      return avg;
+    }
+  
+    void printHello() {
+      System.out.println("Hello");
+    }
+
+  When you define a variable-length argument for a method, Java creates an array behind the 
+  scenes to implement it. You can define only one variable argument in a parameter list, and 
+  it should be the last variable in the parameter list. If you don’t comply with these two
+  rules, your code won’t compile:
+
+  class Employee {
+    public int daysOffWork(String... months, int... days) { //Won’t compile.
+      int daysOff = 0;
+      for (int i = 0; i < days.length; i++)
+        daysOff += days[i];
+        return daysOff;
+      }
+    }
+
+	class Employee {
+      public int daysOffWork(int... days, String year) { //Won’t compile.
+        int daysOff = 0;
+        for (int i = 0; i < days.length; i++)
+          daysOff += days[i];
+
+        return daysOff;
+      }
+    }
+
+			*********************
+			*EXAM TIP: In the OCA exam, you may be questioned on the valid return types
+            for a method that doesn’t accept any method parameters. Note that there are
+            no valid or invalid combinations of the number and type of method parameters
+            that can be passed to a method and the value that it can return. They’re
+            independent of each other.
+
+  RULES TO REMEMBER
+   - You can define multiple parameters for a method.
+   - The method parameter can be a primitive type or objects referenced by a class
+     or referenced by an interface.
+   - The method’s parameters are separated by commas.
+   - Each method parameter is preceded by the name of its type. Each method
+     parameter must have an explicit type declared with its name. You can’t declare
+     the type once and then list them separated by commas, as you can for variables.
+
+3.3.3 Return statement
+  A return statement is used to exit from a method, with or without a value. For methods
+  that define a return type, the return statement must be immediately followed by
+  a return value.
+
+  double calcAverage(int marks1, int marks2) {
+    double avg = 0;
+    avg = (marks1 + marks2)/2.0;
+    return avg;
+  }
+
+  void setWeight(double val) {
+    weight = val;
+  }
+  
+  void setWeight(double val) {
+    if (val < -1) return;
+    weight = val;
+  }
+
+  The return statement must be the last statement to execute in a method, if present.
+    void setWeight(double val) {
+      return;
+      weight = val; //Won´t compile
+    }
+
+RULES TO REMEMBER WHEN DEFINING A RETURN STATEMENT
+  - For a method that returns a value, the return statement must be followed
+    immediately by a value.
+  - For a method that doesn’t return a value (return type is void), the return statement
+    must not be followed by a return valu. (neither void)
+  - If the compiler determines that a return statement isn’t the last statement to
+    execute in a method, the method will fail to compile.
+
+RULES TO REMEMBER FOR DEFINING METHODS WITH ARGUMENTS AND RETURN TYPES
+  - A method returns a value by using the keyword return, followed by the name of
+    a variable or an expression whose value is passed back to the calling method.
+  - The returned value from a method may or may not be assigned to a variable. If
+    the value is assigned to a variable, the variable type must be compatible with the
+    type of the return value.
+  - A return statement must be the last statement in a method. Statements placed
+    after the return statements aren’t reachable and fail to compile.
+  - A method can be an instance method (nonstatic) or a class method (static).
+  - A method can take zero or more parameters but can return only zero or
+    one values.
+  
+  
+3.4 Create an overloaded method
+  Overloaded methods are methods with the same name but different method parameter lists.
+   int intVal = 10;
+   boolean boolVal = false;
+   String name = "eJava";
+
+   System.out.println(intVal);  //Prints an int value
+   System.out.println(boolVal); //Prints a boolean value
+   System.out.println(name);    //Prints a String value
+
+RULES TO REMEMBER FOR DEFINING OVERLOADED METHODS
+  Here are a few rules for defining overloaded methods:
+   - Overloaded methods must have different method parameters from one another.
+   - Overloaded methods may or may not define a different return type.
+   - Overloaded methods may or may not define different access modifiers.
+   - Overloaded methods can’t be defined by only changing their return type or
+     access modifiers.
+
+	Argument list
+	  Overloaded methods accept different lists of arguments. The argument lists can differ
+	  in terms of any of the following:
+	   - Change in the number of parameters that are accepted
+	   - Change in the types of parameters that are accepted
+	   - Change in the positions of the parameters that are accepted (based on parameter
+		 type, not variable names)
+
+	  When compiler can’t determine which overloaded method should be called, 
+	  the code will fail to compile:
+
+		class MyClass {
+		  double calcAverage(double marks1, int marks2) {
+			return (marks1 + marks2)/2.0;
+		  }
+		  double calcAverage(int marks1, double marks2) {
+			return (marks1 + marks2)/2.0;
+		  }
+		  public static void main(String args[]) {
+			MyClass myClass = new MyClass();
+			myClass.calcAverage(2, 3); //Compiler can't determine which overloaded method should be called
+		  }
+	   }
+
+	3.4.2 Return type
+	  Methods can’t be defined as overloaded methods if they differ only in their return types;
+
+		double calcAverage(int marks1, int marks2) {
+		  return (marks1 + marks2)/2.0;
+		}
+		int calcAverage(int marks1, int marks2) {
+		  return (marks1 + marks2)/2.0;
+		}
+
+	  ***The previous methods can’t be termed overloaded methods. If they’re defined within
+	  the same class, they won’t compile. The code also won’t compile if one of the methods
+	  is defined in a subclass or derived class.
+
+
+	3.4.3 Access Modifier
+	  Methods can’t be defined as overloaded methods if they only differ in their access modifiers:
+
+		public double calcAverage(int marks1, int marks2) {
+		  return (marks1 + marks2)/2.0;
+		}
+		private double calcAverage(int marks1, int marks2) {
+		  return (marks1 + marks2)/2.0;
+		}
+	  
+	  ***If you define overloaded calcAverage methods as shown in the preceding code, the
+	  scode won’t compile.
+
+3.5 Constructors of a class
+  In this section, you’ll create constructors, learn the differences between default and
+  user-defined constructors, and create overloaded constructors.
+  
+  1.Constructors are special methods that create and return an object of the class in which they’re defined.
+  2.Constructors have the same name as the name of the class in which they’re defined.
+  3.They don’t specify a return type—not even void.
+  
+  A constructor can accomplish the following tasks:
+    - Call the base class’s constructor; this can be an implicit or explicit call.
+    - Initialize all of the instance variables of a class with their default values.
+	
+  Constructors come in two flavors: user-defined constructors and default constructors,
+  which we’ll cover in detail in the next sections.
+
+3.5.1 User-defined constructors 
+  The author of a class has full control over the definition of the class. An author may or
+  may not define a constructor in a class. If the author does define a constructor in a
+  class, it’s known as a user-defined constructor.
+  It’s called “user-defined” because it’s defined by the one who created the class not by 
+  the Java compiler.
+
+    class Employee {
+      String name;
+      int age;
+      Employee() {
+        age = 20;
+        System.out.println("Constructor");
+      }
+	  
+	  Employee(int newAge, String newName) {
+        name = newName;
+        age = newAge;
+        System.out.println("Constructor");
+      }
+	  
+	  void Employee() {   //***This is a Method not a constructor
+        System.out.println("Not a constructor");
+      }
+    }
+
+	class Office {
+      public static void main(String args[]) {
+        Employee emp = new Employee();
+      }
+    }
+
+  The output of the previous code is:  "Constructor"
+
+			*********************
+			*EXAM TIP: You can define a constructor using all four access modifiers: public,
+            protected, default, and private. Which implies Java will treat it as another
+            method, not a constructor, which also implies that it won’t be called implicitly when
+            you create an object of its class..
+			
+			*********************
+			*EXAM TIP: A constructor must not define any return type. Instead, it creates
+			and returns an object of the class in which it’s defined. If you define a
+			return type for a constructor, it’ll no longer be treated as a constructor.
+			Instead, it’ll be treated as a regular method, even though it shares the same
+			name as its class.
+
+INITIALIZER BLOCKS VERSUS CONSTRUCTORS
+  An initializer block is defined within a class, not as a part of a method. It executes for
+  every object that’s created for a class.
+    //OPT1
+    class Employee {
+      {
+        System.out.println("Employee:initializer");
+      }
+    }
+	class TestEmp {
+      public static void main(String args[]) {
+        Employee e = new Employee();
+      }
+    }
+    //The output of the class TestEmp is as follows:
+	//  Employee:initializer
+	
+	//OPT2
+	class Employee {
+	  Employee() {
+	    System.out.println("Employee:constructor");
+	  }
+	  {
+	    System.out.println("Employee:initializer");
+	  }
+	}
+	class TestEmp {
+	  public static void main(String args[]) {
+	    Employee e = new Employee();
+	  }
+	}
+	//The output of the class TestEmp is as follows:
+	//  Employee:initializer
+	//  Employee:constructor
+
+  Initializer blocks are used to initialize the variables of anonymous classes. 
+  An anonymous class is a type of inner class. In the absence of a name, anonymous 
+  classes can’t define a constructor and rely on an initializer block to initialize 
+  their variables upon the creation of an object of their class. 
+  Inner classes are not on this exam.
+  
+  A lot of action can happen within an initializer block: It can create local variables.
+  It can access and assign values to instance and static variables. It can call methods and
+  define loops, conditional statements, and try-catch-finally blocks. Unlike constructors,
+  an initializer block can’t accept method parameters.
+
+3.5.2 Default constructor
+  What happens if you don’t define any constructor in a class?
+  
+    class Employee {
+      String name;
+      int age;
+    }
+	class Office {
+      public static void main(String args[]) {
+        Employee emp = new Employee();
+      }
+    }
+
+  In the absence of a user-defined constructor, Java inserts a default constructor. This
+  constructor doesn’t accept any method arguments. It calls the constructor of the
+  super (parent) class and assigns default values to all the instance variables.
+  
+  When a class with a constructor is compiled, the Java compiler doesn’t add a default
+  constructor to it.
+  
+    class Employee {
+	  String name;
+	  int age;
+	  Employee(int newAge, String newName) {
+	    name = newName;
+	    age = newAge;
+	    System.out.println("User defined Constructor");
+	  }
+	}
+
+  In this case, upon recompilation, the Java compiler will notice that you’ve defined a
+  constructor in the class Employee. It won’t add a default constructor to it.
+  
+  In the absence of a no-argument constructor, the following code will fail to compile:
+    class Office {
+      public static void main(String args[]) {
+        Employee emp = new Employee();
+      }
+    }
+
+			*********************
+			*EXAM TIP: Java defines a default constructor if and only if you don’t define
+            a constructor. If a class doesn’t define a constructor, the compiler will add a
+            default, no-argument constructor to the class. But if you modify the class later
+            by adding a constructor to it, the Java compiler will remove the default, noargument
+            constructor that it initially added to the class.
+
+3.5.3 Overloaded constructors
+  In the same way in which you can overload methods in a class, you can also overload
+  the constructors in a class. Overloaded constructors follow the same rules as discussed in the
+  previous section for overloaded methods.
+
+INVOKING AN OVERLOADED CONSTRUCTOR FROM ANOTHER CONSTRUCTOR
+  It’s common to define multiple constructors in a class and reuse their functionality
+  across constructors. Unlike overloaded methods, which can be invoked using the
+  name of a method, overloaded constructors are invoked by using the keyword this—
+  an implicit reference that’s accessible to all objects that refer to an object itself:
+
+  class Employee {
+    String name;
+    int age;
+    Employee() {
+      this(null, 0);
+    }
+    Employee(String newName, int newAge) {
+      name = newName;
+      age = newAge;
+    }
+  }
+
+  Because a constructor is defined using the name of its class, it’s a common mistake
+  to try to invoke a constructor from another constructor using the class’s name:
+
+    class Employee {
+      String name;
+      int age;
+      Employee() {
+        Employee(null, 0);
+      }
+      Employee(String newName, int newAge) {
+        name = newName;
+        age = newAge;
+      }
+    }
+
+  Also, when you invoke an overloaded constructor using the keyword this, it must be
+  the first statement in your constructor.
+
+	class Employee {
+	  String name;
+	  int age;
+	  Employee() {
+	    System.out.println("No-argument constructor");
+	    this(null, 0); //Won't compile
+	  }
+	  Employee(String newName, int newAge) {
+	    name = newName;
+	    age = newAge;
+	  }
+	}
+
+  That’s not all: you can’t call a constructor from any other method in your class. None
+  of the other methods of the class Employee can invoke its constructor.
+
+RULES TO REMEMBER
+  Here’s a quick list of rules to remember for the exam for defining and using overloaded
+  constructors:
+   - Overloaded constructors must be defined using different argument lists.
+   - Overloaded constructors can’t be defined by just a change in the access modifiers.
+   - Overloaded constructors may be defined using different access modifiers.
+   - A constructor can call another overloaded constructor by using the keyword this.
+   - A constructor can’t invoke a constructor by using its class’s name.
+   - If present, the call to another constructor must be the first statement in
+     a constructor.
+
+3.6 Accessing object fields
+  In this section, you’ll read, initialize, and modify object fields. You’ll also learn the correct
+  notation used to call methods on objects. Access modifiers also determine
+  whether you can call a method on an object.
+  
+  3.6.1 What is an object field?
+  An object field is another name for an instance variable defined in a class.
+  The name of an object field is not determined by the name of its getter or setter methods.
+
+	  class Star {
+	    double starAge;
+	    public void setAge(double newAge) {
+	      starAge = newAge;
+	    }
+	    public double getAge() {
+	      return starAge;
+	    }
+ 	  }
+
+  3.6.2 Read and write object fields
+  The OCA Java SE 7 Programmer I exam will test you on how to read values from and
+  write them to fields of an object, which can be accomplished by any of following:
+   - Using methods to read and write object fields.
+   - Using constructors to write values to object fields.
+   - Directly accessing instance variables to read and write object fields.
+
+  3.6.3 Calling methods on objects
+  The OCA Java SE 7 Programmer I exam will specifically test you on the following:
+   - The correct notation used to call a method on an object reference variable
+   - The right number of method parameters that must be passed to a method
+   - The return value of a method that’s assigned to a variable
+   
+   Java uses the dot notation (.) to execute a method on a reference variable.
+    
+	class Employee {
+	  private String name;
+	  public void setName(String val) {
+	    name = val;
+	  }
+	  public String getName() {
+        return name;
+      }
+	}
+  You can create an object of class Employee and call the method setName on it like this:
+    Employee e1 = new Employee();
+    e1.setName("Java");
+    /* Invalid method invocations
+	e1->setName("Java");
+    e1->.setName("Java");
+    e1-setName("Java");
+	*/
+	String anotherVal = "Harry";
+	e1.setName("Shreya");   //Passing literal value as method parameter
+	e1.setName(anotherVal); //Passing variable as method parameter
+   
+3.7 Apply encapsulation principles to a class
+  As the heading of this section suggests, we’ll apply the encapsulation principle to a
+  class. A well-encapsulated object doesn’t expose its internal parts to the outside world.
+  It defines a set of methods that enable the users of the class to interact with it.
+
+3.7.1 Need for encapsulation
+  The private members of a class—its variables and methods—are used to hide information
+  about a class.
+
+    class Phone {
+	  String model;
+	  String company;
+	  double weight;
+	  void makeCall(String number) {}
+	  void receiveCall() {}
+	}
+
+  Because the variable weight isn’t defined as a private member, any other class can
+  access it and write any value to it, as follows:
+
+    class Home {
+      public static void main() {
+        Phone ph = new Phone();
+        ph.weight = -12.23;      //Assign a negative weight to Phone
+      }
+    }
+
+3.7.2 Apply encapsulation
+  The object fields of a class that isn’t well encapsulated are exposed outside of the class. 
+  This approach enables the users of the class to assign arbitrary values to the object fields.
+
+    class Phone {
+      private double weight;
+    }
+
+  But now this variable won’t be accessible in class Home. Let’s define methods using this
+  variable, which can be accessible outside the class Phone
+  
+	class Phone {
+	  private double weight;
+	  public void setWeight(double val) {
+	    if (val > 0 && val < 1000) {
+	      weight =val;
+	    }
+	  }
+	  public double getWeight() {
+        return weight;
+      }
+    }
+
+  **This behavior is known as exposing object functionality using public method
+
+    class Home {
+	  public static void main(String[] args) {
+	    Phone ph = new Phone();
+	    ph.setWeight(-12.23);
+	    System.out.println(ph.getWeight()); //Assign a negative weight to Phone object
+	    ph.setWeight(77712.23);
+		System.out.println(ph.getWeight()); //Assign weight > 1,000 to Phone object
+		ph.setWeight(12.23);
+		System.out.println(ph.getWeight()); //Assign weight in allowed range
+	  }
+	}
+
+			*********************
+			*EXAM TIP: The terms encapsulation and information hiding are used interchangeably.
+			By exposing object functionality only through methods, you can
+			prevent your private variables from being assigned any values that don’t fit
+			your requirements. One of the best ways to create a well-encapsulated class is
+			to define its instance variables as private variables and allow access to these
+			variables using public methods.
+
+3.8 Passing objects and primitives to methods
+  In this section, you’ll learn the difference between passing object references and
+  primitives to a method. You’ll determine the effect upon object references and primitive
+  values when they’re passed into methods that change the values.
+
+3.8.1 Passing primitives to methods
+  The value of a primitive data type is copied and passed on to a method. Hence, the
+  variable whose value was copied doesn’t change:
+
+  class Employee {
+    int age;
+    void modifyVal(int a) {
+      a = a + 1;
+      System.out.println(a);
+    }
+  }
+  class Office {
+    public static void main(String args[]) {
+      Employee e = new Employee();
+      System.out.println(e.age);
+      e.modifyVal(e.age);
+      System.out.println(e.age);
+    }
+  }
+  **The output of the previous code is as follows:
+  0
+  1
+  0
+
+  What happens if the definition of the class Employee is modified as follows:
+    class Employee {
+      int age;
+      void modifyVal(int age) {
+        age = age + 1;
+        System.out.println(age);
+      }
+    }
+  **The output of the previous code is as follows:
+  0
+  1
+  0
+	
+			*********************
+			*EXAM TIP: When you pass a primitive variable to a method, its value remains
+			the same after the execution of the method. The value doesn’t change,
+			regardless of whether the method reassigns the primitive to another variable
+			or modifies it.
+
+3.8.2 Passing object references to methods
+  There are two main cases:
+   - When a method reassigns the object reference passed to it to another variable
+   - When a method modifies the state of the object reference passed to it
+
+WHEN METHODS REASSIGN THE OBJECT REFERENCES PASSED TO THEM
+  When you pass an object reference to a method, the method can assign it to another
+  variable. In this case, the state of the object, which was passed on to the method,
+  remains intact.
+
+    class Person {
+	  private String name;
+	  Person(String newName) {
+	    name = newName;
+	  }
+	  public String getName() {
+	    return name;
+	  }
+	  public void setName(String val) {
+	    name = val;
+	  }
+	}
+     
+	**What do you think is the output of the following code?
+	class Test {
+	  public static void swap(Person p1, Person p2) {
+	    Person temp = p1;
+	    p1 = p2;
+	    p2 = temp;
+	  }
+	  public static void main(String args[]) {
+	    Person person1 = new Person("John");
+	    Person person2 = new Person("Paul");
+	    System.out.println(person1.getName() + ":" + person2.getName()); //John:Paul
+		swap(person1, person2);
+	    System.out.println(person1.getName()+ ":" + person2.getName());  //John:Paul
+	  }
+	}
+  
+WHEN METHODS MODIFY THE STATE OF THE OBJECT REFERENCES PASSED TO THEM
+  Let’s see how a method can change the state of an object so that the modified state is
+  accessible in the calling method.
+  
+    class Person {
+	  private String name;
+	  Person(String newName) {
+	    name = newName;
+	  }
+	  public String getName() {
+	    return name;
+	  }
+	  public void setName(String val) {
+	    name = val;
+	  }
+	}
+
+	**What do you think is the output of the following code?
+	class Test {
+	  public static void resetValueOfMemberVariable(Person p1) {
+	    p1.setName("Rodriguez");
+	  }
+	  public static void main(String args[]) {
+	    Person person1 = new Person("John");
+	    System.out.println(person1.getName()); //John
+	    resetValueOfMemberVariable(person1);
+	    System.out.println(person1.getName()); //Rodriguez
+	  }
+	}

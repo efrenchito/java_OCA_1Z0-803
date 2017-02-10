@@ -1,0 +1,869 @@
+7.Exception Handling.
+This chapter covers the following:
+  - Understanding and identifying exceptions arising in code
+  - Determining how exceptions alter the normal program flow
+  - Understanding the need to handle exceptions separately in your code
+  - Using try-catch-finally blocks to handle exceptions
+  - Differentiating among checked exceptions, unchecked exceptions, and errors
+  - Invoking methods that may throw exceptions
+  - Recognizing common exception categories and classes
+
+You might feel like we’re covering a lot in this chapter, but remember that we aren’t
+going to delve into too much background information because we assume you already
+know the definitions and uses of classes and methods, class inheritance, arrays, and
+ArrayLists. Our focus in this chapter will be on the exam objectives and what you need
+to know about exceptions.
+In this chapter, I won’t discuss a try statement with multiple catch clauses, automatic
+closing of resources with a try-with-resources statement, or the creation of custom
+exceptions. These topics are covered in the next level of Java certification (in the
+OCP Java SE 7 Programmer II exam).
+
+7.1 Exceptions in Java
+  In this section, you’ll learn what exceptions are in Java, why you need to handle exceptions
+  separately from the main code, and all about their advantages and disadvantages.
+
+  7.1.1 A taste of exceptions
+  
+    public class ArrayAccess {
+	  public static void main(String args[]) {
+	    String[] students = {"Shreya", "Joseph", null};
+		                                            //Because the length of the array students is 3,
+	    System.out.println(students[5].length());   //trying to access the element at array position 5 is an exceptional condition
+	  }
+	}
+	
+	public class OpenFile {
+	  public static void main(String args[]) {
+	                                                            //The constructor of the class FileInputStream throws a checked
+                                                                //exception FileNotFoundException, If you try to compile this
+	    FileInputStream fis = new FileInputStream("file.txt");  //code without enclosing it within a try block or catching 
+																//this exception, your code will fail to compile.
+	  }
+	}
+	
+	public class MethodAccess {
+	   public static void main(String args[]) {
+	     myMethod();
+	   }
+	   public static void myMethod() {
+	     System.out.println("myMethod");
+		               //the method myMethod calls itself recursively, without
+		 myMethod();   //specifying an exit condition. These recursive calls result
+                       //in a StackOverflowError at runtime.
+	   }
+	}
+	
+	These examples of exceptions are typical of what you’ll find on the OCA Java SE 7 Programmer
+    I exam. Let’s move on and explore exceptions and their handling in Java so
+    that you can spot code that throws exceptions and handles them accordingly.
+	
+	*****File I/O in Java
+    File I/O isn’t covered in the OCA Java SE 7 Programmer I exam, but you may notice
+    it mentioned in questions related to exception handling. I’ll cover it quickly here just
+    to the extent that it’s required for this exam.
+	In this chapter, you’ll work with three classes from the file I/O API: 
+	java.io.File, java.io.FileInputStream, and java.io.FileOutputStream.
+	  - FILE is an abstract representation of file and directory pathnames. 
+	    You can open a File and then read from and write to it.
+      - A FILEINPUTSTREAM obtains input bytes using an object of class File.
+	    It defines the methods read to read bytes and close to close this stream.
+	  - A FILEOUTPUTSTREAM is an output stream for writing data to a File.
+	    It defines the methods write to write bytes and close to close this stream.
+    ***Creating an object of class File can throw the checked exception java.io.FileNotFoundException. 
+	The methods read, write, and close defined in classes FileInputStream and FileOutputStream can 
+	throw the checked exception java.io.IOException. 
+	Note that FileNotFoundException subclasses IOException.
+	
+  7.1.2 Why handle exceptions separately?
+    Imagine you want to post some comments on a blogging website. To make a comment,
+    you must complete the following steps:
+      a Access the blogging website.
+      b Log into your account.
+      c Select the blog you want to comment on.
+      d Post your comments.
+	
+	  try {
+		Access the blogging website
+		Login to your account
+		Select the blog to be commented on
+		Post your comments
+	  }catch (WebsiteUnavailableException e) {
+		// define code to execute if website not available
+	  }catch (LoginUnsuccesfulException e) {
+		// code to execute if login is unsuccessful
+	  }catch (DatabaseAccessException e) {
+		// code to execute if data for particular
+		// post cannot be accessed
+	  }
+    
+	The code in figure 7.6 defines the original steps required to post comments to a blog,
+    along with some exception-handling code. Because the exception handlers are
+	defined separately, any confusion with what steps you need to accomplish to post comments
+	on the website has been clarified.
+	
+  7.1.3 Do exceptions offer any other benefits?
+	Apart from separating concerns between defining the regular program logic and the
+	exception handling code, exceptions also can help pinpoint the offending code (code
+	that throws an exception), together with the method in which it is defined, by providing
+	a stack trace of the exception or error.
+	
+	  public class Trace {                          // line 1
+	    public static void main(String args[]) {    // line 2
+	      method1();                                // line 3
+	    } 									        // line 4
+	    public static void method1() { 		        // line 5
+	      method2(); 							    // line 6
+	    }                                           // line 7
+	    public static void method2() {              // line 8
+	      String[] students = {"Shreya", "Joseph"}; // line 9
+  	      System.out.println(students[5]); 		    // line 10
+	    } 										    // line 11
+	  }
+	
+	method2() tries to access the array element of students at index 5, which is an invalid
+    index for array students, so the code throws the exception ArrayIndexOutOfBounds-
+    Exception at runtime. Shows the stack trace when this exception is thrown.
+    It includes the runtime exception message and the list of methods that were involved
+    in calling the code that threw the exception, starting from the entry point of this
+    application, the main method.
+	
+	  Exception in thread "main"
+	  java.lang.ArrayIndexOutOfBoundsException: 5
+	  at Trace.method2(Trace.java:10)
+	  at Trace.method1(Trace.java:6)
+	  at Trace.main(Trace.java:3)
+
+  7.2 What happens when an exception is thrown?
+    To understand how an exception propagates through method calls, it’s important
+    to understand how method calls work. An application starts its execution with
+    the method main, and main may call other methods. When main calls another
+    method, the called method should complete its execution before main can complete
+    its own execution.
+	An operating system (OS) keeps track of the code that it needs to execute using a
+	stack. A stack is a type of list in which the items that are added last to it are the first
+	ones to be taken off it—Last In First Out. This stack uses a stack pointer to point to the
+	instructions that the OS should execute.
+
+  7.2.1 Creating try-catch-finally blocks
+    When you work with exception handlers, you often hear the terms try, catch,
+	and finally. Before you start to work with these concepts, I’ll answer three simple
+	questions:
+     - Try what?
+     First you try to execute your code. If it doesn’t execute as planned, you handle
+     the exceptional conditions using a catch block.
+     - Catch what?
+     You catch the exceptional event arising from the code enclosed within the try
+     block and handle the event by defining appropriate exception handlers.
+     - What does finally do?
+     Finally, you execute a set of code, in all conditions, regardless of whether the
+     code in the try block throws any exceptions.
+	 
+	 @NOTE: You can create an exception of your own—a custom exception—by
+     extending the class Exception (or any of its subclasses). Although the creation
+     of custom classes is not on this exam, you may see questions in the exam
+     that create and use custom exceptions. Perhaps these are included because
+     hardly any checked exceptions from the Java API are on this exam. Coding
+     questions on the exam may create and use custom exceptions.
+	 
+	   class FallInRiverException extends Exception {}
+       class DropOarException extends Exception {}
+	   class RiverRafting {
+		 void crossRapid(int degree) throws FallInRiverException {
+		   System.out.println("Cross Rapid");
+		   if (degree > 10) throw new FallInRiverException();
+		 }
+		 void rowRaft(String state) throws DropOarException {
+		   System.out.println("Row Raft");
+		   if (state.equals("nervous")) throw new DropOarException();
+		 }
+	   }
+
+    When you execute methods that may throw checked exceptions (exceptions that
+	don’t extend the class RuntimeException), enclose the code within a try block.
+	catch blocks that follow a try block should handle all the checked exceptions
+	thrown by the code enclosed in the try block.
+	
+	1> RiverRafting riverRafting = new RiverRafting();
+	2> try {
+	3>    riverRafting.crossRapid(11);
+	4>    riverRafting.rowRaft("happy");
+	5>    System.out.println("Enjoy River Rafting");
+	6> }
+	7> catch (FallingRiverException e1) {
+	8>    System.out.println("Get back in the raft");
+	9> }
+	10> catch (DropOarException e2) {
+	11>    System.out.println("Do not panic");
+	12> }
+	13> finally {
+	14>    System.out.println("Pay for the sport");
+	15> }
+	16> System.out.println("After the try block");
+	
+	How exceptions alter the normal program flow? 
+	If the code on line 3 throws an exception (FallInRiverException)
+	
+	  Cross Rapid
+	  Get back in the raft
+	  Pay for the sport
+	  After the try block
+	
+	What do you think the output of the code would be if the method rowRaft threw an
+    exception? Try it for yourself!
+	  
+	  Cross Rapid
+	  Row Raft
+	  Do not panic
+	  Pay for the sport
+	  After the try block
+	  
+        *********************
+		*EXAM TIP: The finally block executes regardless of whether the try block
+        throws an exception.
+
+    SINGLE TRY BLOCK, MULTIPLE CATCH BLOCKS, AND A FINALLY BLOCK
+	For a try block, you can define multiple catch blocks, but only a single finally
+	block. Multiple catch blocks are used to handle different types of exceptions. A
+	finally block is used to define cleanup code—code that closes and releases resources,
+	such as file handlers and database or network connections.
+	
+	The constructor of the class FileInputStream may throw a FileNot-
+    FoundException, and calling the method read on an object of FileInputStream, such
+    as fis, may throw an IOException.
+
+	  import java.io.*;
+	  public class MultipleExceptions {
+		public static void main(String args[]) {
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream("file.txt");
+				System.out.println("File Opened");
+				fis.read();
+				System.out.println("Read File ");
+			}
+			catch (FileNotFoundException fnfe) {
+				System.out.println("File not found");
+			}
+			catch (IOException ioe) {
+				System.out.println("File Closing Exception");
+			}
+			finally {
+				System.out.println("finally");
+			}
+			System.out.println("Next task..");
+		}
+	  }
+
+	Here’s the output of the class MultipleExceptions if none of its code throws
+    an exception:
+	
+  	  File Opened
+	  Read File
+	  finally
+	  Next task..
+	  
+   7.2.2 Will a finally block execute even if the catch block defines a
+   return statement?
+	 It is interesting to note that a finally block will execute even if the code in the
+     try block or any of the catch blocks defines a return statement.
+	 
+	   import java.io.*;
+	   public class ReturnFromCatchBlock {
+	     public static void main(String args[]) {
+		   openFile();
+		 }
+		 private static void openFile() {
+		   FileInputStream fis = null;
+		   try {
+		     fis = new FileInputStream("file.txt");
+		   }
+		   catch (FileNotFoundException fnfe) {
+		     System.out.println("file not found");
+		     return;
+		   }
+		   finally {
+		     System.out.println("finally");
+		   }
+		   System.out.println("Next task..");
+		 }
+	   }
+	 There are a few scenarios in Java in which a finally block does not execute:
+     - Application termination—The try or the catch block executes System.exit,
+       which terminates the application.
+     - Fatal errors—A crash of the JVM or the OS.
+
+    7.2.3 What happens if both a catch and a finally block define return statements?
+	  For a method that defines a try-catch-finally block,
+      what is returned to the calling method if both catch and finally return a value?
+	  
+	    class MultipleReturn {
+		   int getInt() {
+		   try {
+		     String[] students = {"Harry", "Paul"};
+		     System.out.println(students[5]);
+		   }
+		   catch (Exception e) {
+		     return 10;
+		   }
+		   finally {
+		     return 20;
+		   }
+         }
+	     public static void main(String args[]) {
+		   MultipleReturn var = new MultipleReturn();
+		   System.out.println(var.getInt());
+	     }
+       } 
+     
+	 The output of the preceding code is
+       20
+	   
+     If both catch and finally blocks define return statements, the calling method will
+     receive a value from the finally block.
+
+     7.2.4 What happens if a finally block modifies the value returned from a catch block?
+	   If a catch block returns a primitive data type, the finally block can’t modify the
+       value being returned by it. An example:
+
+		class MultipleReturn {
+		  int getInt() {
+		    int returnVal = 10;
+		    try {
+		      String[] students = {"Harry", "Paul"};
+		      System.out.println(students[5]);
+		    }
+		    catch (Exception e) {
+  		      System.out.println("About to return :" + returnVal);
+		      return returnVal;
+		    }
+		    finally {
+		      returnVal += 10;
+		      System.out.println("Return value is now :" + returnVal);
+		    }
+		    return returnVal;
+		  }
+		  public static void main(String args[]) {
+		    MultipleReturn var = new MultipleReturn();
+		    System.out.println("In Main:" + var.getInt());
+		  }
+		}
+    
+	 The output of the preceding code is as follows:
+       About to return :10
+       Return value is now :20
+       In Main:10
+    
+	 Even though the finally block adds 10 to variable returnVal, this modified value is
+     not returned to the method main. Control in the catch block copies the value of
+	 returnVal to be returned before it executes the finally block, so the returned value
+	 is not modified when finally executes.
+	  
+	 Will the preceding code behave in a similar manner if the method returns an object?
+	   In this case, the catch block returns an object of the class StringBuilder. When the
+       finally block executes, it can access the value of the object referred to by the variable
+       returnVal and can modify it. The modified value is returned to the method main.
+		
+	 Watch out for code that returns a value from the catch block and
+	 modifies it in the finally block. If a catch block returns a primitive data
+     type, the finally block can’t modify the value being returned by it. If a catch
+	 block returns an object, the finally block can modify the value being
+	 returned by it.
+	  
+   7.2.5 Does the order of the exceptions caught in the catch blocks matter?
+	 Order doesn’t matter for unrelated classes. But it does matter for related classes sharing
+     an IS-A relationship. In the latter case, if you try to catch an exception of the base class 
+	 before an exception of the derived class, your code will fail to compile.
+
+	 Exception class hierarchy
+     - java.lang.Throwable
+     - java.lang.Exception
+     - java.io.IOException
+     - java.io.FileNotFoundException
+	 
+	    import java.io.*;
+		
+		public class CaseBaseExceptionBeforeDerived {
+		   public static void main(String args[]) {
+		      FileInputStream fis = null;
+		      try {
+		         fis = new FileInputStream("file.txt");
+		         fis.close();
+		      }
+		      catch ( IOException ioe) {
+		         System.out.println("IOException");
+		      }
+		      catch ( FileNotFoundException fnfe) {
+		         System.out.println("file not found");
+		      }
+		   }
+		}
+
+	RULES TO REMEMBER
+	Here are a few more rules you’ll need to answer the questions in the OCA Java SE 7
+	Programmer I exam:
+	  - A try block may be followed by multiple catch blocks, and the catch blocks
+		may be followed by a single finally block.
+	  - A try block may be followed by either a catch or a finally block or both. But
+		a finally block alone wouldn’t suffice if code in the try block throws a
+		checked exception. In this case, you need to catch the checked exception or
+		declare it to be thrown by your method. Otherwise your code won’t compile.
+	  - The try, catch, and finally blocks can’t exist independently.
+	  - The finally block can’t appear before a catch block.
+	  - A finally block always executes, regardless of whether the code throws
+		an exception.
+
+   7.2.6 Can I rethrow an exception or the error I catch?
+     You can do whatever you want with an exception. Rethrow it, pass it on to a method,
+     assign it to another variable, upload it to a server, send it in an SMS, and so on.
+	
+	   import java.io.*;
+       public class ReThrowException {
+         FileInputStream soccer;
+         public void myMethod() throws FileNotFoundException {
+		   try {
+		     soccer = new FileInputStream("soccer.txt");
+           }
+           catch (FileNotFoundException fnfe) {
+             throw fnfek;
+           }
+         }
+       }
+
+   7.2.7 Can I declare my methods to throw a checked exception, instead of handling it?
+     If a method doesn’t wish to handle the checked exceptions thrown by a method it
+     calls, it can throw these exceptions using the throws clause in its own method signature.
+
+	   import java.io.*;
+       public class ReThrowException2 {
+         public void myMethod() throws IOException {
+           FileInputStream soccer = new FileInputStream("soccer.txt");
+		   soccer.close();
+         }
+	   }
+
+    Any method that calls myMethod must now either catch the exception IOException or
+    declare that it will be rethrown in its method signature.	 
+	 
+   
+   7.2.8 I can create nested loops, so can I create nested try-catch blocks too? 	
+     The simple answer is yes, you can define a try-catch-finally block within another
+     try-catch-finally block. Theoretically, the levels of nesting for the try-catchfinally
+     blocks have no limits.
+	 
+   7.3 Categories of exceptions
+   In this section, you’ll learn about the categories of exceptions in Java, including
+   checked exceptions, unchecked exceptions, and errors. I’ll use code examples to
+   explain the differences between these categories.
+    
+     7.3.1 Identifying exception categories
+	   - Checked exceptions
+       - Runtime exceptions (unchecked exceptions)
+       - Errors
+	 
+	 For the OCA Java SE 7 Programmer I exam, it’s important to have a crystal-clear understanding
+     of these three categories of exceptions, including their similarities and differences.
+	 
+	 + java.lang.Object
+	 + java.lang.Throwable
+	 + java.lang.Exception           + java.lang.Error
+	   - java.lang.RuntimeException
+	   
+	 7.3.2 Checked exceptions
+       - A checked exception is an unacceptable condition foreseen by the author of a
+	 method but outside the immediate control of the code. For example, FileNot-
+	 FoundException is a checked exception. This exception is thrown if the file that
+	 the code is trying to access can’t be found. When it’s thrown, this condition is
+	 outside the immediate control of the author of the code but it was foreseen by
+	 the author.
+	 
+	   - A checked exception is a subclass of class java.lang.Exception, but it’s not a
+	 subclass of java.lang.RuntimeException. It’s interesting to note, however,
+	 that the class java.lang.RuntimeException itself is a subclass of the class
+	 java.lang.Exception.
+	 
+        *********************
+		*EXAM TIP: In the OCA Java SE 7 Programmer I exam, you may have to select
+		which type of reference variable to use to store the object of the thrown
+		checked exception in a handler. To answer such questions correctly, remember
+		that a checked exception is a subclass of the java.lang.Exception class,
+		but not a subclass of java.lang.RuntimeException.
+		
+	   If a method uses another method that may throw a checked exception, one of the two
+       following things should be true:
+        - The method should be enclosed within a try-catch block.
+      or
+        - The method should specify this exception to be thrown in its method signature.
+
+		
+    7.3.3 Runtime exceptions (also known as unchecked exceptions)
+	  Although you’ll spend most of your time and energy combating checked exceptions,
+  	  it’s the runtime exceptions that’ll give you the most headaches. This is particularly
+	  true when you’re preparing to work on real-life projects. Some examples of runtime
+	  exceptions are NullPointerException (the most common one), ArrayIndexOutOfBoundsException, 
+	  and ClassCastException.
+	  
+	    - A runtime exception is a representation of a programming error. These occur
+		from inappropriate use of another piece of code. For example, NullPointer-
+		Exception is a runtime exception that occurs when a piece of code tries to execute
+		some code on a variable that hasn’t been assigned an object and points to
+		null. Another example is ArrayIndexOutOfBoundsException, which is thrown
+		when a piece of code tries to access an array list element at a nonexistent position.
+		- A runtime exception is a subclass of java.lang.RuntimeException.
+		- A runtime exception may not be a part of the method signature, even if a
+		method may throw it.
+		
+		public class InvalidArrayAccess {
+		  public static void main(String args[]) {
+		    String[] students = {"Shreya", "Joseph"};
+		    System.out.println(students[5]);
+		    System.out.println("All seems to be well");
+		  }
+		}
+		
+		It’s possible to create an exception handler for the exception ArrayIndexOutOf: BoundsException
+		  public class InvalidArrayAccess {
+		    public static void main(String args[]) {
+		      String[] students = {"Shreya", "Joseph"};
+		      try {
+  		        System.out.println(students[5]);
+		      }
+		      catch (ArrayIndexOutOfBoundsException e){
+  		        System.out.println("Exception");
+		      }
+		      System.out.println("All seems to be well");
+		    }
+		  }
+		
+        You can prevent ArrayIndexOutOfBoundsException from being thrown by using appropriate checks:		
+		  public class InvalidArrayAccess {
+		    public static void main(String args[]) {
+		      String[] students = {"Shreya", "Joseph"};
+		      int pos = 1;
+		      if (pos > 0 && pos < students.length)
+		        System.out.println(students[pos]);
+		    }
+		  }
+
+    7.3.4 Errors
+	  Whether you’re preparing for the OCA Java SE 7 Programmer I exam or your real-life
+	  projects, you need to know when the JVM throws errors. These errors are considered
+	  to be serious exceptional conditions and they can’t be directly controlled by your code.
+	  
+	    - An error is a serious exception thrown by the JVM as a result of an error in the
+		environment state that processes your code. For example, NoClassDefFound-
+		Error is an error thrown by the JVM when it’s unable to locate the .class file that
+		it’s supposed to run. StackOverflowError is another error thrown by the JVM
+		when the size of the memory required by the stack of a Java program is greater
+		than what the JRE has offered for the Java application. This error usually occurs
+		as a result of infinite or highly nested loops.
+		- An error is a subclass of class java.lang.Error.
+		- An error need not be a part of a method signature.
+		- An error can be caught by an exception handler, but it shouldn’t be.
+	 
+	 7.4 Common exception classes and categories
+	   In this section, we’ll take a look at common exception classes and categories of exceptions.
+	   You’ll also learn about the scenarios in which these exceptions are thrown and
+	   how to handle them.
+       For the OCA Java SE 7 Programmer I exam, you should be familiar with the scenarios
+       that lead to these commonly thrown exception classes and categories, and how to
+       handle them.
+	   
+	   RuntimeExceptions
+	   [java.lang.Object -> java.lang.Throwable -> java.lang.RuntimeException -> ...]
+	    - ArrayIndexOutOfBoundsException
+	    - IndexOutOfBoundsException
+	    - ClassCastException
+	    - IllegalArgumentException
+	    - IllegalStateException
+	    - NullPointerException
+	    - NumberFormatException
+	   
+	   Errors
+	   [java.lang.Object -> java.lang.Throwable -> java.lang.Error -> ...]
+	    - ExceptionInInitializerError
+	    - StackOverflowError
+	    - NoClassDefFoundError
+	    - OutOfMemoryError
+		
+	   The OCA Java SE 7 Programmer I exam objectives require that you understand
+       which of the previously mentioned errors and exceptions are thrown by the JVM
+       and which should be thrown programmatically.
+	   
+	   7.4.1 ArrayIndexOutOfBoundsException and IndexOutOfBoundsException
+	     [...java.lang.IndexOutOfBoundsException -> java.lang.ArrayIndexOutOfBoundsException]
+	     ArrayIndexOutOfBoundsException and IndexOutOfBoundsException are runtime exceptions, 
+		 which share an IS-A relationship. IndexOutOfBoundsException is subclassed by 
+		 ArrayIndexOutOfBoundsException.
+		 
+		 - ArrayIndexOutOfBoundsException is thrown when a piece of code tries to access
+		 an array out of its bounds (either an array is accessed at a position less than 0 or at a
+         position greater than or equal to its length).
+		 
+		 - IndexOutOfBoundsException is thrown
+         when a piece of code tries to access a list, like an ArrayList, using an illegal index.
+         Assuming that an array and list have been defined as follows,
+		 
+		   String[] season = {"Spring", "Summer"};
+		   ArrayList<String> exams = new ArrayList<>();
+		   exams.add("SCJP");
+		   exams.add("SCWCD");
+		   
+		   System.out.println(season[5]);     //Throws ArrayIndexOutOfBoundsException
+		   System.out.println(season[-9]);    //Throws ArrayIndexOutOfBoundsException
+		   
+		   System.out.println(exams.get(-1)); //Throws IndexOutOfBoundsException
+		   System.out.println(exams.get(4));  //Throws IndexOutOfBoundsException
+		   
+		   /*if (pos > 0 && pos < students.length)
+		        System.out.println(students[pos]); */
+		   
+		   @NOTE When you try to access an invalid array position, ArrayIndexOutOf-
+		   BoundsException is thrown. When you try to access an invalid ArrayList
+		   position, IndexOutOfBoundsException is thrown.
+		   
+	   7.4.2 ClassCastException	   
+		 [...java.lang.ClassCastException]
+		   
+		   import java.util.ArrayList;
+		   public class ListAccess {
+		     public static void main(String args[]) {
+		        ArrayList<Ink> inks = new ArrayList<Ink>();
+		        inks.add(new ColorInk());
+		        inks.add(new BlackInk());
+		        Ink ink = (BlackInk)inks.get(0);  //Throws ClassCastException
+				/*if (inks.get(0) instanceof BlackInk) {
+				  BlackInk ink = (BlackInk)inks.get(0);
+				}*/
+		     }
+		   }
+		   class Ink{}
+		   class ColorInk extends Ink{}
+		   class BlackInk extends Ink{}
+		 
+		 ClassCastException is thrown when an object fails an IS-A test with the class type to
+		 which it’s being cast.
+
+      7.4.3 IllegalArgumentException
+	    [...java.lang.IlegalArgumentException]
+		IllegalArgumentException is thrown to specify that a method has passed illegal or 
+		inappropriate arguments.
+		
+		  public void login(String username, String pwd, int maxLoginAttempt) {
+		    if (username == null || username.length() < 6)
+			  throw new IllegalArgumentException
+			  ("Login:username can’t be shorter than 6 chars");
+			if (pwd == null || pwd.length() < 8)
+			  throw new IllegalArgumentException
+			  ("Login: pwd cannot be shorter than 8 chars");
+			if (maxLoginAttempt < 0)
+			  throw new IllegalArgumentException
+			  ("Login: Invalid loginattempt val");
+			//.. rest of the method code
+			}
+
+     7.4.4 IllegalStateException 
+	   According to the Java API documentation, an IllegalStateException “signals that a method
+       has been invoked at an illegal or inappropriate time. In other words, the Java environment or
+       Java application is not in an appropriate state for the requested operation.
+	   For example, what happens if an application tries to modify an SMS that is already
+       in transmission?
+	     
+		 class SMS {
+		   private String msg;
+		   private boolean inTransit = false;
+		   public void create() {
+		     msg = "A new Message";
+		   }
+		   public void transmit() {
+		     ........
+		     inTransit = true;
+		   }
+		   public void modify() {
+		     if (!inTransit)
+			   msg = "new modified message";
+		     else
+		       throw new IllegalStateException
+		        ("Msg in transit. Can't modify it");
+		   }
+		 }
+		 public class ThrowIllegalStateException {
+		   public static void main(String[] args) {
+		     SMS sms = new SMS();
+		     sms.create();
+		     sms.transmit();
+		     sms.modify();
+		   }
+		}
+
+    7.4.5 NullPointerException
+	  This exception is thrown by the JVM if you try to access a method or a variable with
+	  a null value. The exam can have interesting code combinations to test you on
+	  whether a particular piece of code will throw a NullPointerException. The key is to
+	  ensure that the reference variable has been assigned a non-null value.
+	  
+	  In particular, I’ll address the following cases:
+		- Accessing members of a reference variable that is explicitly assigned a null value.
+		- Accessing members of an uninitialized instance or static reference variable.
+          These are implicitly assigned a null value.
+		- Using an uninitialized local variable, which may seem to throw a NullPointer-
+          Exception.
+		- Attempting to access nonexistent array positions.
+		- Using members of an array element that are assigned a null value.
+		
+		   import java.util.ArrayList;
+		   class ThrowNullPointerException {
+			 static ArrayList<String> list = null;
+			 public static void main(String[] args) {
+			   list.add("1");  //Throws a NullPointerException
+			 }
+		   }
+		   
+		   import java.util.ArrayList;
+		   class ThrowNullPointerException {
+			 ArrayList<String> list;
+			 public static void main(String[] args) {
+			   ThrowNullPointerException obj = new ThrowNullPointerException();
+			   obj.list.add("1"); //Throws a NullPointerException
+			 }
+		   }
+
+		 You can prevent a NullPointerException from being thrown by checking whether an
+         object is null before trying to access its member:
+		 
+		   import java.util.ArrayList;
+           class ThrowNullPointerException {
+			 static ArrayList<String> list;
+			 public static void main(String[] args) {
+			   if (list!=null)
+			   list.add("1");
+			 }
+		   }
+
+		   
+		   What happens if you modify the previous code as follows?
+		     import java.util.ArrayList;
+			 class ThrowNullPointerException {
+			   public static void main(String[] args) {
+			   ArrayList<String> list;
+			   if (list!=null)
+			     list.add("1");
+			   }
+			 }
+		 Interestingly, the previous code fails to compile. list is defined as a local variable
+		 inside the method main, and by default, local variables aren’t assigned a value—not
+		 even a null value. If you attempt to use an uninitialized local variable, your code will
+         fail to compile.
+		   
+		 Watch out for similar questions in the exam.
+         Another set of conditions when code may throw the NullPointerException
+	     involves use of arrays:
+		 
+		   class ThrowAnotherNullPointerException {
+			 static String[] oldLaptops;
+			 public static void main(String[] args) {
+			   System.out.println(oldLaptops[1]);
+			   String[] newLaptops = new String[2];
+			   System.out.println(newLaptops[1].toString());
+			 }
+		   }
+
+		 
+        *********************
+		*EXAM TIP: In the exam, watch out for code that tries to use an uninitialized
+         local variable. Because such variables aren’t initialized with even a null value,
+		 you can’t print their value using the System.out.println method. Such code
+		 won’t compile.
+
+    7.4.6 NumberFormatException
+	  What happens if you try to convert “87” and “9m#” to numeric values? The former value is
+	  okay, but you can’t convert the latter value to a numeric value unless it’s an encoded value,
+	  straight from a James Bond movie, that can be converted to anything.
+	  
+	  NumberFormatException is a runtime exception. It’s thrown to indicate that the application has tried to
+	  convert a string (with an inappropriate format) to one of the numeric types.
+	  Multiple classes in the Java API define parsing methods. One of the most frequently used
+	  methods is parseInt from the class Integer. It’s used to parse a String argument as a
+      signed (negative or positive) decimal integer.
+	  
+	    System.out.println(Integer.parseInt("-123"));
+		System.out.println(Integer.parseInt("123"));
+		System.out.println(Integer.parseInt("+123"));
+		System.out.println(Integer.parseInt("123_45")); //Throws a NumberFormatException
+		System.out.println(Integer.parseInt("12ABCD")); //Throws a NumberFormatException
+		
+	  Specifying the base of the number system as 16:
+		System.out.println(Integer.parseInt("123ABCD", 16)); //Prints 1223629
+
+   
+   [java.lang.Object -> java.lang.Throwable -> java.lang.Error ...]
+   7.4.7 ExceptionInInitializerError
+   ...java.lang.LinkageError -> java.lang.ExceptionInInitializerError ]
+   
+   The ExceptionInInitializerError error is typically thrown by the JVM when a
+   static initializer in your code throws any type of RuntimeException.
+   A static initializer block is defined using the keyword static, followed by
+   curly braces, in a class. This block is defined within a class, but not within a
+   method. It’s usually used to execute code when a class loads for the first time. 
+   Runtime exceptions arising from any of the following will throw this error:
+   
+     - Execution of an anonymous static block
+     - Initialization of a static variable
+     - Execution of a static method (called from either of the previous two items)
+	 
+	 public class DemoExceptionInInitializerError { 
+       static {
+         int num = Integer.parseInt("sd", 16);
+       }
+     }
+	 
+	 public class DemoExceptionInInitializerError1 {
+	   static String name = null;
+	   static int nameLength = name.length();
+	 }
+	 
+        *********************
+		*EXAM TIP: Beware of code that seems to be simple in the OCA Java SE 7 Programmer
+        I exam. The class DemoExceptionInInitializerError (mentioned
+        previously) seems deceptively simple, but it’s a good candidate for an exam
+        question. As you know, this class throws the error ExceptionInInitializer-
+	    Error when the JVM tries to load it.
+
+	    *********************
+		*EXAM TIP: ExceptionInInitializerError can be caused by an object of
+		RuntimeException only. It can’t occur as the result of an error or checked
+		exception thrown by the static initialization block	
+
+
+   7.4.8 StackOverflowError
+    ... java.lang.JavaVirtualMachine -> java.lang.StackOverflowError ]
+     As its name suggests, it should be left to be managed by the JVM. This error is thrown 
+	 by the JVM when a Java program calls itself so many times that the memory stack allocated 
+	 to execute the Java program “overflows.”
+	    
+	   public class DemoStackOverflowError{
+		 static void recursion() {
+		   recursion();
+		 }
+		 public static void main(String args[]) {
+		   recursion();    //Trhows StackOverflowError
+		 }
+	   }
+
+    7.4.9 NoClassDefFoundError
+	 ... java.lang.LinkageError -> java.lang.NoClassDefFoundError ]
+      What would happen if you failed to set your classpath and, as a result, the JVM was 
+	  unable to load the class that you wanted to access or execute? Or what happens if you 
+	  try to run your application before compiling it? In both these conditions, the JVM 
+	  would throw NoClassDefFoundError.
+
+	     @NOTE: Don’t confuse the exception thrown by Class.forName(), used to
+         load the class, and NoClassDefFoundError thrown by the JVM. Class.for-
+		 Name() throws ClassNotFoundException.
+
+    7.4.10 OutOfMemoryError
+	  What happens if you create and use a lot of objects in your application—for example, 
+	  if you load a large chunk of persistent data to be processed by your application. In such a case, 
+	  the JVM may run out of memory on the heap, and the garbage collector may not be able 
+	  to free more memory for the JVM. In this case, the JVM is unable to create any more 
+	  objects on the heap. An OutOfMemoryError will be thrown
+	  

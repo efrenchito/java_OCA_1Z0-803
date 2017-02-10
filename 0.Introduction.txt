@@ -1,0 +1,12 @@
+Introduction 1Z0-803
+:::::::::::::::::...
+The OCA Java SE Programmer I exam (1Z0-803) covers:
+- The Fundamentals of Java SE 7 Programming
+- The importance of OOP
+
+1Z0-803
+Based on Java version 7
+90 Questions
+77% passing score
+140 minutes
+U$ 300

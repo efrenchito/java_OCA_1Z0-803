@@ -1,0 +1,327 @@
+In the OCA Java SE 7 Programmer I exam, you’ll be asked questions on the various
+data types in Java, such as how to create and initialize them and what their similarities
+and differences are. The exam will also question you on using the Java operators. 
+
+This chapter covers the following:
+ - Primitive data types in Java
+ - Literal values of primitive Java data types
+ - Object reference variables in Java
+ - Valid and invalid identifiers
+ - Usage of Java operators
+ - Modification of default operator precedence via parentheses
+
+2.1 Primitive variables
+  In this section, you’ll learn all the primitive data types in Java, their literal values, and
+  the process of creating and initializing primitive variables. A variable defined as one
+  of the primitive data types is a primitive variable.
+  
+  Java defines the following eight primitive data types:
+  + Primitive data Types
+	  + Numeric  
+		- Integer  byte
+				   short
+				   int
+				   long
+		- Decimal  float
+				   double
+	  + Character  char
+	  + Boolean    boolean
+
+2.1.1 Category: Boolean
+  The Boolean category has only one data type: boolean. A boolean variable can store
+  one of two values: true or false.
+  
+  Here’s some code that defines boolean primitive variables:
+	boolean voucherPurchased = true;
+	boolean examPrepStarted = false;
+	boolean result = false;
+	boolean longDrive = true;
+
+  Java is a strongly typed language.
+  You must declare a variable and define its type before you can assign a value to it.
+  Another point to note here is the value that’s assigned to a boolean variable.
+
+2.1.2 Category: Numeric
+  The numeric category defines two subcategories: integers and floating point 
+  (also called decimals).
+  INTEGERS: BYTE, SHORT, INT, LONG
+	BYTE   8 bits -128 to 127 inclusive
+	SHORT 16 bits -32768 to 32767 inclusive
+	INT   32 bits -2148483648 to 2143483647 inclusive
+	LONG  64 bits -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807 inclusive
+
+		*********************
+		*EXAM TIP: In the OCA Java SE 7 Programmer I exam, you will not be asked
+		to convert a number from the decimal number system to the octal and
+		hexadecimal number systems and vice versa. But you can expect questions
+		that ask you to select valid literals for integers. The previous figures will
+		help you understand these number systems better and retain this information
+		longer, which will in turn enable you to answer questions correctly
+		during the exam.
+
+	  You can assign integer literals in base decimal, binary, octal, and hexadecimal. For
+	  octal literals, use the prefix 0; for binary, use the prefix 0B or 0b; and for hexadecimal,
+	  use the prefix 0x or 0X. Here’s an example of each of these:
+	  
+	  int baseDecimal = 267;
+	  int octVal = 0413;
+	  int hexVal = 0x10B;
+	  int binVal = 0b100001011;
+
+	  With Java Version 7, you can also use underscores as part of the literal values, whith
+	  helps group the individual digist or letters of the literal values and is much more readable.
+	  The underscores has no effect on the values. The following is valid code:
+	  
+	  long baseDecimal = 100_267_760;
+	  long octVal = 04_13;
+	  long hexVal = 0x10_BA_75;
+	  long binVal = 0b1_0000_10_11;
+
+	  RULES TO REMEMBER
+	  Pay attention to the use of underscores in the numeric literal values. Here are some of the rules:
+	  - You can’t start or end a literal value with an underscore.
+	  - You can’t place an underscore right after the prefixes 0b, 0B, 0x, and 0X, which
+		are used to define binary and hexadecimal literal values.
+	  - You can place an underscore right after the prefix 0, which is used to define an
+		octal literal value.
+	  - You can’t place an underscore prior to an L suffix or F suffix 
+		(the L/f suffix is used to mark aliteral value as long/float).
+	  - You can’t use an underscore in positions where a string of digits is expected. 
+		int i = Integer.parseInt("45_98");
+
+  FLOATING-POINT NUMBERS: FLOAT AND DOUBLE
+    FLOAT:  32 bits
+	DOUBLE: 64 bits
+	
+	The default type of a decimal literal is double:
+	    double default = 20.129;
+	    float average = 20.129F;
+		float orbit = 1765.65f;
+        double inclination = 120.1762d;
+        double inclination = 120.1762D;
+
+2.1.3 Category: Character
+  The character category defines only one data type: char. A char can store a single 16-
+  bit Unicode character; that is, it can store characters from virtually all the existing
+  scripts and languages.
+    
+	char c1 = 'D';  //Use single quotes to assign at char, not double quotes
+    char c2 = 'D';
+	//char c3 = "D";  missmatch
+		*********************
+		*EXAM TIP: Never use double quotes to assign a letter to a char variable. Double
+         quotes are used to assign a value to a variable of type String.
+
+  Internally, Java stores char data as an unsigned integer value (positive integer). It’s
+  therefore perfectly acceptable to assign a positive integer value to a char, as follows:
+  
+    char c1 = 122;
+
+  Also you can assign unicode values as follows (in quotes):
+    
+	char c2 = '\u0122';
+
+  char values are unsigned integer values, so if you try to assign a
+  negative number to one, the code will not compile. Here’s an example:
+   
+    char c3 = -122;
+
+  But you can forcefully assign a negative number to a char by casting it to char, as follows:
+
+    char c3 = (char)-122;
+    System.out.println("c3 = " + c3);
+
+  2.1.4 Confusion with the names of the primitive data types
+    If you’ve previously worked in another programming language, there’s a good
+    chance that you might get confused with the names of the primitive data types in Java
+    and other languages.
+	
+	  public class MyChar {
+		public static void main(String[] args) {
+			int myInt = 7;
+			bool result = true;  //bool is not a primitive Java data type
+			if (result == true)
+				do
+					System.out.println(myInt);
+				while (myInt > 10);
+		}
+	  }
+
+		*********************
+		*EXAM TIP: Watch out for questions that use incorrect names for the primitive
+		data types. For example, there isn’t any bool primitive data type in Java. The
+		correct data type is boolean. If you’ve worked with other programming languages,
+		you might get confused trying to remember the exact names of all the
+		primitive data types used in Java. Remember that just two of the primitive data
+		types—int and char—are shortened; the rest of the primitive data types
+		(byte, short, long, float, and double) are not.
+	
+2.2 Identifiers
+  Identifiers are names of packages, classes, interfaces, methods, and variables.
+
+2.2.1 Valid and invalid identifiers
+  Properties of valid Identifiers
+	  Unlimited length
+	  Starts with a letter ( a–z, upper- or lowercase), a
+	  currency sign, or an underscore
+	  Can use a digit (not at the starting position)
+	  Can use an underscore (in any position)
+	  Can use a currency sign (in any position): $, £, ¢, ¥ and others
+	  *** You can’t define a variable with the same name as Java keywords or reserved words
+
+2.3 Object reference variables
+  The variables in Java can be categorized into two types: primitive variables and reference variables
+  (also known as object reference variables or object references).
+  
+2.3.1 What are object reference variables?
+  Objects are instances of classes, including both predefined and user-defined classes.
+    
+	Person person = new Person();
+  
+  When the statement shown in figure 2.10 executes, three things happen:
+   - A new Person object is created.
+   - A variable named person is created in the stack with an empty (null) value.
+   - The variable person is assigned the memory address value where the object
+     is located.
+
+  The literal value of all types of object reference variables is null. You can also
+  assign a null value to a reference variable explicitly.
+
+2.3.2 Differentiating between object reference variables and primitive variables
+  Primitive variables and object reference variables differ from each other in multiple ways. 
+  The basic difference is that primitive variables store the actual values, whereas reference variables 
+  store the addresses of the objects they refer to.
+
+2.4 Operators
+  In this section, you’ll use different types of operators—assignment, arithmetic, relational,
+  and logical—to manipulate the values of variables.
+  
+  Operator Type  Operators               Purpose
+  Assignment     =, +=, -=, *=, /=       Assign value to a variable
+  Arithmetic     +, -, *, /, %, ++, --   Add, substract, multiply, divide, and modulus primitives
+  Relational     <, <=, >, >=, ==, , !=  Compare primitives
+  Logical        !, &&, ||	             Apply NOT, AND, and OR logic to primitives
+
+  @NOTE Not all operators can be used with all types of operands. For example,
+  you can determine whether a number is greater than another number, but
+  you can’t determine whether true is greater than false or a number is
+  greater than true.
+
+	2.4.1 Assignment operators
+	  The assignment operators that you need to know for the exam are =, +=, -=, *=, and /=.
+	  The simple assignment operator, =, is the most frequently used operator. It’s used
+	  to initialize variables with values and to reassign new values to them.
+
+		a -= b is equal to a = a – b
+		a += b is equal to a = a + b
+		a *= b is equal to a = a * b
+		a /= b is equal to a = a / b
+	
+		*********************
+		*EXAM TIP: You can’t use the assignment operators to
+        assign a boolean value to variables of type char, byte,
+		int, short, long, float, or double, or vice versa.
+
+	  You can also assign multiple values on the same line using the assignment operator. 
+	  Examine the following lines of code:
+
+		int a = 7, b = 10, c = 8;
+		a = b = c;
+		System.out.println(a);
+
+	2.4.2 Arithmetic operators
+	  The operators ++ and -- are unary operators; they work with a single operand
+	  When a unary operator is used in an expression, its placement with respect to its operand
+	  decides whether its value will increment or decrement before the evaluation of
+	  the expression or after the evaluation of the expression.
+
+		int a = 20;
+		int b = 10;
+		int c = a - ++b;
+		System.out.println(c);
+		System.out.println(b);
+
+	2.4.3 Relational Operators
+	   Relational operators are used to check one condition. You can use these operators to
+	   determine whether a primitive value is equal to another value or whether it is less than
+	   or greater than the other value.
+	   These relational operators can be divided into two categories:
+		- Comparing greater (>, >=) and lesser values (<, <=)
+		- Comparing values for equality (==) and nonequality (!=)
+	
+		*********************
+		*EXAM TIP: You cannot compare incomparable values. For example, you cannot
+		compare a boolean with an int, a char, or a floating-point number. If
+		you try to do so, your code will not compile.
+
+  COMPARING PRIMITIVES FOR EQUALITY (USING == AND !=)
+  The operators == (equal to) and != (not equal to) can be used to compare all types of
+  primitives: char, byte, short, int, long, float, double, and boolean.
+  
+	Examine the following code:
+	int a = 10;
+	int b = 20;
+	System.out.println(a == b);
+	System.out.println(a != b);
+	
+	boolean b1 = false;
+	System.out.println(b1 == true);
+	System.out.println(b1 != true);
+	System.out.println(b1 == false);
+	System.out.println(b1 != false);
+	
+		*********************
+		*EXAM TIP: The result of the relational operation is always a boolean value.
+		You can’t assign the result of a relational operation to a variable of type char,
+		int, byte, short, long, float, or double.
+
+  COMPARING PRIMITIVES USING THE ASSIGNMENT OPERATOR (=)
+  It’s a very common mistake to use the assignment operator, =, in place of the equality
+  operator, ==, to compare primitive values.
+  
+  @NOTE: You can’t compare primitive values by using the assignment operator, =.
+  Comparing incompatible data types will fail to compile and raise an error.
+  
+  2.4.4 Logical operators
+    Logical operators are used to evaluate one or more expressions. These expressions
+    should return a boolean value. You can use the logical operators AND, OR, and NOT to
+    check multiple conditions and proceed accordingly
+	
+  - Logical AND (&&)—Evaluates to true if all operands are true; false otherwise.
+  - Logical OR (||)—Evaluates to true if any or all of the operands is true.
+  - Logical negation (!)—Negates the boolean value. Evaluates to true for false,
+    and vice versa.
+	
+	&& AND || ARE SHORT-CIRCUIT OPERATORS
+	Another interesting point to note with respect to the logical operators && and || is
+	that they’re also called short-circuit operators because of the way they evaluate their
+	operands to determine the result.
+	
+	    int marks = 8;
+	    int total = 10;
+		System.out.println(total < marks && ++marks > 5);
+		System.out.println(marks);
+		System.out.println(total == 10 || ++marks > 10);
+		System.out.println(marks);
+
+    @NOTE: All the relational and logical operators return a boolean value, which
+    can be assigned to a primitive boolean variable.
+
+  2.4.5 Operator precedence
+    
+	Precedence of operators
+	1.Postfix         Expression++, expression--
+	2.Unary           ++expression, --expression, +expression, -expression, !
+	3.Multiplication  *(multiply), /(divide), %(remainder)
+	4.Addition        +(add), -(substract)	 
+	5.Relational      <, >, <=, >=
+	6.Equality        ==, !=
+	7.Logical AND     &&
+	8.Logical OR      ||
+	9.Assignment      =, +=, -=, *=, /=, %=
+  
+  
+  @NOTE You can use parentheses to override the default operator precedence.
+  If your expression defines multiple operators and you are unsure how your
+  expression will be evaluated, use parentheses to evaluate in your preferred
+  Sorder. The inner parentheses are evaluated prior to the outer ones.

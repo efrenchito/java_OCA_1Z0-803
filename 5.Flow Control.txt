@@ -1,0 +1,620 @@
+5.Flow Control
+Java, the selection statements (if and switch) and looping statements (for,
+enhanced for, while, and do-while) are used to define and choose among different
+courses of action, as well as to repeat lines of code. You use these types of statements
+to define the flow of control in code.
+
+In the OCA Java SE 7 Programmer I exam, you’ll be asked how to define and control
+the flow in your code. To prepare you, I’ll cover the following topics in this chapter:
+  - Creating and using if, if-else, and switch constructs to execute statements selectively
+  - Creating and using loops—while, do-while, for, and enhanced for
+  - Creating nested constructs for selection and iteration statements
+  - Comparing the do-while, while, for, and enhanced for loop constructs
+  - Using break and continue statements
+
+5.1 The if and if-else constructs
+In this section, we’ll cover if and if-else constructs. 
+We’ll examine what happens when these constructs are used with and without curly braces {}. 
+We’ll also cover nested if and if-else constructs.
+
+  5.1.1 The if construct and its flavors
+  An if construct enables you to execute a set of statements in your code based on the result 
+  of a condition. This condition must always evaluate to a boolean or a Boolean value. You can
+  specify a set of statements to execute when this condition evaluates to true or false.
+
+  flavors of the if statement:
+   - if
+   - if-else
+   - if-else-if-else
+ 
+  5.1.2 Missing else blocks
+  What happens if you don’t define the else statement for an if construct? It’s acceptable
+  to define one course of action for an if construct as follows (omitting the else part):
+
+    boolean testValue = false;
+    if (testValue == true)
+      System.out.println("value is true");
+
+  but you can't define an else part of an if construct, skipping the then block.
+  
+    boolean testValue = false;
+	if (testValue == true)     
+	else                       //Won't compile
+	    System.out.println("value is false");
+
+  Missing then or else part it's ok:
+    int score = 100;
+	if ((score=score+10) > 100);
+
+	  @NOTE: Using if(testValue==true) is the same as using if(testValue). Similarly,
+	  if(testValue==false) is the same as using if(!testValue). This
+	  book includes examples of both these approaches. A lot of beginners in Java
+	  programming find the latter approach (without the explicit ==) confusing.
+
+  5.1.3 Implications of the presence and absence of {} in if-else constructs
+  You can execute a single statement or a block of statements when an if condition
+  evaluates to true or false. An if block is marked by enclosing one or more statements
+  within a pair of curly braces, {}.
+    
+	String name = "Lion";
+	int score = 100;
+	if (name.equals("Lion"))
+	   score = 200;
+	   name = "Larry";        //Execute even if name is not equals to "Lion"
+
+        *********************
+		*EXAM TIP: In the exam, watch out for code like this that uses misleading
+		indentation in if constructs. In the absence of a defined code block (marked
+		with a pair of {}), only the statement following the if construct will be considered
+		to be part of it.
+
+  5.1.4 Appropriate versus inappropriate expressions passed as arguments to an if statement
+  The result of a variable or an expression used in an if construct must evaluate to true
+  or false. Assume the following definitions of variables:
+    
+	int score = 100;
+	boolean allow = false;
+	String name = "Lion";
+  
+  Let’s look at a few examples of some of the valid variables and expressions that can be
+  passed to an if statement.
+  
+    (score == 100)
+	(name == "Lio")
+	(score <= 100 || allow)
+	(allow)
+
+        *********************
+		*EXAM TIP: Watch out for code in the exam that uses the assignment operator
+	    (=)to compare a boolean value in the if condition. It won’t compare the
+		boolean value; it’ll assign a value to it. The correct operator for comparing
+		a boolean value is the equality operator (==).
+
+  5.1.5 Nested if constructs
+  A nested if construct is an if construct defined within another if construct. Theoretically,
+  there is no limit on the levels of nested if and if-else constructs.
+  Whenever you come across nested if and if-else constructs, you need to be careful
+  about determining the else part of an if statement.
+    
+	int score = 110;
+	if (score > 200)
+	   if (score <400)
+	      if (score > 300)
+			 System.out.println(1);
+          else
+		     System.out.println(2);
+       else
+		  System.out.println(3);
+
+  Next, you need to understand how to do the following:
+   - How to define an else for an outer if other than the one that it’ll be assigned to by default
+   - How to determine to which if an else belongs in nested if constructs
+   ***The key point is to use curly braces.
+
+5.2 The switch statement
+  In this section, you’ll learn how to use the switch statement and see how it compares
+  to nested if-else constructs. You’ll learn the right ingredients for defining
+  values that are passed to the switch labels and the correct use of the break statement
+  in these labels.
+  
+  5.2.1 Create and use a switch statement
+  You can use a switch statement to compare the value of a variable with multiple values.
+  For each of these values, you can define a set of statements to execute.
+  
+    int marks = 20;
+	switch (marks) {
+	  case 10: System.out.println(10);
+	     break;
+	  case 20: System.out.println(20);
+	     break;
+	  case 30: System.out.println(30);
+		 break;
+	  default: System.out.println("default");
+	     break;
+    }
+
+  5.2.2 Comparing a switch statement with multiple if-else constructs
+  A switch statement can improve the readability of your code.
+  
+  Examine the following code, which uses if-else-if-else statements to check the
+  value of a String variable day and display an appropriate message:
+    
+	String day = "SUN";
+    if (day.equals("MON") || day.equals("TUE")||day.equals("WED") || day.equals("THU"))
+       System.out.println("Time to work");
+    else if (day.equals("FRI"))
+       System.out.println("Nearing weekend");
+    else if (day.equals("SAT") || day.equals("SUN"))
+       System.out.println("Weekend!");
+    else
+       System.out.println("Invalid day?");
+
+  Now examine this implementation of the previous logic using the switch statement:
+  
+    String day1 = "SUN";
+	switch(day){
+	   case "MON":
+	   case "TUE":
+	   case "WED":
+	   case "THU": System.out.println("Time to work");
+		           break;
+	   case "FRI": System.out.println("Nearing weekend");
+		           break;
+	   case "SAT":
+	   case "SUN": System.out.println("Weekend");
+		           break;
+	      default: System.out.println("Invalid day?");
+		           //break;  //Optionally
+	}
+
+        *********************
+		*EXAM TIP: The if-else-if-else construct evaluates all of the conditions until
+		it finds a match. A switch construct compares the argument passed to it with
+		its labels.
+
+5.2.3 Arguments passed to a switch statement
+  You can’t use the switch statement to compare all types of values, such as all types of
+  objects and primitives. There are limitations on the types of arguments that a switch
+  statement can accept.
+  
+  Switch:
+   - char, byte, short, int, String, Integer, Short, Byte, Character, enum
+  
+  If:
+   - boolean, Boolean
+   
+        *********************
+		*EXAM TIP: Watch out for questions in the exam that try to pass a primitive
+		decimal type such as float or double to a switch statement. Code that tries
+		to do so will not compile.
+
+5.2.4 Values passed to the label case of a switch statement
+  You’re constrained in a couple of ways when it comes to the value that can be passed
+  to the case label in a switch statement.
+  
+  CASE VALUES SHOULD BE COMPILE-TIME CONSTANTS
+	  The value of a case label must be a compile-time constant value; that is, the value
+	  should be known at the time of code compilation
+	  
+		int a=10, b=20, c=30;
+		switch (a) {
+		  //case b+c: System.out.println(b+c); break;       //Not Allowed
+		  case 10*7: System.out.println(10*7512+10); break;
+		}
+
+	  You can use variables in an expression if they’re marked final because the value
+	  of final variables can’t change once they’re initialized:
+	  
+		final int a = 10;
+		final int b = 20;
+		final int c = 30;
+		switch (a) {
+		   case b+c: System.out.println(b+c); break;
+		}
+
+	  You may be surprised to learn that if you don’t assign a value to a final variable
+	  with its declaration, it isn’t considered a compile-time constant:
+	  
+		final int a = 10;
+		final int b = 20;
+		final int c;
+		c = 30;
+		switch (a) {
+		  case b+c: System.out.println(b+c); break;  //b+c isn’t considered a constant expression because the
+													 //variable c wasn’t initialized with its declaration.
+		}
+
+  CASE VALUES SHOULD BE ASSIGNABLE TO THE ARGUMENT PASSED TO THE SWITCH STATEMENT
+    Examine the following code, in which the type of argument passed to the switch statement
+    is byte and the case label value is of the type float. Such code won’t compile:
+	
+	  byte myByte = 10;
+      switch (myByte) {
+        case 1.2: System.out.println(1); break;
+      }
+	  
+  NULL ISN’T ALLOWED AS A CASE LABEL
+    Code that tries to compare the variable passed to the switch statement with null
+    won’t compile, as demonstrated in the following code:
+
+	  String name = "Paul";
+	  switch (name) {
+	     case "Paul": System.out.println(1);
+	                  break;
+	     case null: System.out.println("null");
+      }
+
+  ONE CODE BLOCK CAN BE DEFINED FOR MULTIPLE CASES
+  It’s acceptable to define a single code block for multiple case labels in a switch statement,
+  as shown by the following code:
+
+    int score =10;
+	switch (score) {
+      case 100:
+      case 50 :
+      case 10 : System.out.println("Average score");
+                break;
+      case 200: System.out.println("Good score");
+   }
+
+  CASES CAN'T BE DUPLICATED
+  It's not acceptable to have the same case associated with multiples blocks.
+  Won't compile, watch case 100:
+    int score =10;
+	switch (score) {
+      case 100:
+      case 50 :
+      case 10 : System.out.println("Average score");
+                break;
+      case 200:
+	  case 100: System.out.println("Good score");
+   }
+
+  5.2.5 Use of break statements within a switch statement
+    Note the use of break to exit the switch construct once a
+    matching case is found. In the absence of the break statement, control will fall through
+    the remaining code and execute the code corresponding to all the remaining cases
+    that follow that matching case until next break or end switch cases.
+
+
+5.3 The for loop
+  A for loop is usually used to execute a set of statements a fixed number of times. It
+  takes the following form:
+
+    for (initialization; condition; update) {
+      statements;
+    }
+	
+	int tableOf = 25;
+    for (int ctr = 1; ctr <= 5; ctr++) {
+      System.out.println(tableOf * ctr);
+    }
+
+  Let’s explore the initialization block, termination condition, and update clause of
+  a for loop in detail.
+
+  5.3.1 Initialization block
+    An initialization block executes only once. A for loop can declare and initialize multiple
+    variables in its initialization block, but the variables it declares should be of the
+    same type.
+  
+      int tableOf = 25;
+      for (int ctr = 1, num = 100000; ctr <= 5; ++ctr) {
+        System.out.println(tableOf * ctr);
+        System.out.println(num * ctr);
+      }
+      //for (int j=10, long longVar = 10; j <= l; ++j) { }   //Won't compile
+	
+    It’s a common programming mistake to try to use the variables defined in a for’s initialization
+    block outside the for block. Please note that the scope of the variables
+    declared in the initialization block is limited to the for block.
+
+	  int tableOf = 25;
+      for (int ctr = 1; ctr <= 5; ++ctr) {
+        System.out.println(tableOf * ctr);
+      }
+      ctr = 20;
+
+  5.3.2 Termination condition
+    The termination condition is evaluated once for each iteration before executing the
+    statements defined within the body of the loop. The for loop terminates when the termination
+    condition evaluates to false.
+	A for loop can define exactly one termination condition—no more, no less.
+
+  5.3.3 The update clause
+    Usually, you’d use this block to manipulate the value of the variable that you used to
+    specify the termination condition.
+	Code defined in this block executes after all the code defined in the body of the for loop.
+	The termination condition is evaluated next. This execution continues until the termination
+	condition evaluates to false. You can define multiple statements in the update clause, including 
+	calls to other methods. The only limit is that these statements will execute in the order in which
+    they appear, at the end of all the statements defined in the for block.
+	
+	  public class ForIncrementStatements {
+        public static void main(String args[]) {
+          String line = "ab";
+		  for (int i=0; i < line.length(); ++i, printMethod())
+		    System.out.println(line.charAt(i));
+        }
+		
+		private static void printMethod() {
+		  System.out.println("Happy");
+        }
+     }
+	 
+5.3.4 Nested for loop
+  If a loop encloses another loop, they are called nested loops. The loop that encloses
+  another loop is called the outer loop, and the enclosed loop is called the inner loop. Theoretically,
+  there are no limits on the levels of nesting for loops.
+  
+    for (int hrs=1; hrs<=6; hrs++) {
+      for (int min=1; min<=60; min++) {
+        System.out.println(hrs+":"+min);
+      }
+    }
+	
+	int multiArr[][];
+    multiArr = new int[2][3];
+    for (int i=0; i<multiArr.length; i++) {
+      for (int j=0; j<multiArr[i].length; j++){
+        multiArr[i][j] = i + j;
+      }
+    }
+
+5.4 The enhanced for loop
+  The enhanced for loop is also called the for-each loop, and it offers some advantages
+  over the regular for loop. It also has some limitations.
+  
+    ArrayList myList:
+    ArrayList<String> myList= new ArrayList<String>();
+    myList.add("Java");
+    myList.add("Loop");
+    
+  The following code uses the regular for loop to iterate through this list:
+	for(Iterator<String> i = myList.iterator(); i.hasNext();)
+        System.out.println(i.next());
+
+  The following code uses the enhanced for loop to iterate through the list myList:
+    for (String val : myList)
+         System.out.println(val);
+		 
+  What happens when you try to modify the value of the loop variable in an enhanced for loop?
+  The result depends on whether you’re iterating through a collection of
+  primitive values or objects. If you’re iterating through an array of primitive values,
+  manipulation of the loop variable will never change the value of the array being iterated
+  because the primitive values are passed by value to the loop variable in an
+  enhanced for loop.
+  When you iterate through a collection of objects, the value of the collection is
+  passed by reference to the loop variable. Therefore, if the value of the loop variable
+  is manipulated by executing methods on it, the modified value will be reflected in the
+  collection of objects being iterated:
+  
+        *********************
+		*EXAM TIP: Watch out for code that uses an enhanced for loop and its loop
+		variable to change the values of elements in the collection that it iterates. This
+		behavior often serves as food for thought for the exam authors.
+
+5.4.1 Limitations of the enhanced for loop
+  Though a for-each loop is a good choice for iterating through collections and arrays,
+  it can’t be used in some places.
+  
+  SHOULDN’T BE USED TO INITIALIZE AN ARRAY AND MODIFY ITS ELEMENTS
+    int[] myArray = new int[5];
+    for (int i=0; i<myArray.length; ++i) {
+      myArray[i] = i;
+      if ((myArray[i]%2)==0)
+        myArray[i] = 20;
+    }
+
+	int myArray[] = new int[5];
+    int i = 0;
+    for(int index : myArray){
+		myArray[i] = i;
+	    if(i%2 == 0)
+		   myArray[i] = 20;
+
+		i++;
+	}
+
+    Although you can define a “counter” outside of the enhanced for loop and use it to initialize and 
+    modify the array elements, this approach defeats the purpose of the for-each loop. The existing for 
+    loop is easier to use in this case.
+
+  CAN’T BE USED TO DELETE OR REMOVE THE ELEMENTS OF A COLLECTION
+    Because the for loop hides the iterator used to iterate through the elements of a collection,
+    you can’t use it to remove or delete the existing collection values because you can’t call the 
+	remove method.
+	
+	  ArrayList<StringBuilder> myList= new ArrayList<>();
+	  myList.add(new StringBuilder("One"));
+	  myList.add(new StringBuilder("Two"));
+
+	    for (StringBuilder val : myList)
+	      System.out.println (val);
+	    for (StringBuilder val : myList)
+	      val = null;  //Just sets value of loop variable to null
+	    for (StringBuilder val : myList)
+	      System.out.println(val);
+
+	The output of the previous code is:
+      One
+      Two
+      One
+      Two
+
+  CAN’T BE USED TO ITERATE OVER MULTIPLE COLLECTIONS OR ARRAYS IN THE SAME LOOP
+    Though it’s perfectly fine for you to iterate through nested collections or arrays using a
+    for loop, you can’t iterate over multiple collections or arrays in the same for-each loop
+    because the for-each loop allows for the creation of only one looping variable. Unlike
+    the regular for loop, you can’t define multiple looping variables in a for-each loop.
+	
+        *********************
+		*EXAM TIP: Use the for-each loop to iterate arrays and collections. Don’t use it
+		to initialize, modify, or filter them.
+
+5.4.2 Nested enhanced for loop
+  First of all, working with a nested collection is not the same as working with a nested
+  loop. A nested loop can also work with unrelated collections. The loop that defines another 
+  loop within itself is called the outer loop, and the loop that’s defined within another loop 
+  is called the inner loop. Theoretically, the level of nesting for any of the loops has no limits, 
+  including the enhanced for loop.
+  You can compare a three-level nested loop with a clock that has hour, minute, and second hands.
+  
+    ArrayList<String> exams  = new ArrayList<>();
+    exams.add("Java"); exams.add("Oracle");
+    ArrayList<String> levels = new ArrayList<>();
+    levels.add("Basic"); levels.add("Advanced");
+    ArrayList<String> grades = new ArrayList<>();
+    grades.add("Pass"); grades.add("Failed");
+
+    for(String exam : exams)
+	  for(String level : levels)
+		for(String grade : grades)
+		   System.out.println(exam +":"+ level +":" + grade);
+
+5.5 The while and do-while loops
+  You’ll learn about while and do-while loops in this section. Both of these loops execute
+  a set of statements as long as their condition evaluates to true. Both of these
+  loops work in exactly the same manner, except for one difference: the while loops
+  checks its condition before evaluating its loop body, and the do-while loop checks its
+  condition after executing the statements defined in its loop body.
+
+  5.5.1 The while loop
+    A while loop is used to repeatedly execute a set of statements as long as its condition
+    evaluates to true. This loop checks the condition before it starts the execution of
+    the statement.
+
+  5.5.2 The do-while loop
+    A do-while loop is used to repeatedly execute a set of statements until the condition
+    that it uses evaluates to false. This loop checks the condition after it completes the
+    execution of all the statements in its loop body.
+	  
+	  boolean exitSelected = false;
+	  do {
+	    String selectedOption = displayMenuToUser();
+	    if (selectedOption.equals("exit"))
+	      exitSelected = true;
+	    else
+	      executeCommand(selectedOption);
+	  } while (exitSelected == false);
+	  
+      @NOTE: Don’t forget to use a semicolon (;) to end the do-while loop after specifying
+      its condition. Even some experienced programmers overlook this step!
+
+  5.5.3 While and do-while block, expression, and nesting rules
+    You can use the curly braces {} with while and do-while loops to define multiple
+    lines of code to execute for every iteration. Without the use of curly braces, only the
+    first line of code will be considered a part of the while or do-while loop, as specified
+    in the if-else construct.
+
+	
+5.6 Comparing loop constructs
+  In this section, I’ll discuss the differences and similarities between the following looping
+  constructs: do-while, while, for, and enhanced for.
+
+  5.6.1 Comparing do-while and while loops
+    Both do-while and while loops execute a set of statements until their termination
+    condition evaluates to false. The only difference between these two statements is that
+    the do-while loop executes the code at least once, even if the condition evaluates to
+	false. The do-while loop evaluates the termination condition after executing the
+    statements, whereas the while loop evaluates the termination condition before executing
+    its statements.
+
+	  num = 10;
+	  do {
+	    num++;
+	  } while (++num > 20);
+      System.out.println (num);  //Prints 12
+
+      num = 10;
+	  while(++num > 20){
+		num++;
+	  }
+	  System.out.println(num);   //Prints 11
+
+  5.6.2 Comparing for and enhanced for loops
+    The regular for loop, although cumbersome to use, is much more powerful than the
+    enhanced for loop (as mentioned in section 5.4.1):
+     - The enhanced for loop can’t be used to initialize an array and modify
+       its elements.
+     - The enhanced for loop can’t be used to delete the elements of a collection.
+     - The enhanced for loop can’t be used to iterate over multiple collections or
+       arrays in the same loop.
+
+  5.6.3 Comparing for and while loops
+    You should try to use a for loop when you know the number of iterations
+	You should try to use a do-while or a while loop when you don’t know the number
+    of iterations beforehand, and when the number of iterations depends on a condition
+    being true.
+	
+5.7 Loop statements: break and continue
+  In this section, I’ll discuss the break and continue statements, which you can use
+  to exit a loop completely or to skip the remaining statements in a loop iteration. At
+  the end of this section.
+  
+  5.7.1 The break statement
+    The break statement is used to exit—or break out of—the for, for-each, do, and do-while
+    loops, as well as switch constructs. Alternatively, the continue statement can be used to
+    skip the remaining steps in the current iteration and start with the next loop iteration.
+	
+	  String[] programmers = {"Paul", "Shreya", "Selvan", "Harry"};
+	  for (String name : programmers) {
+	    if (name.equals("Shreya"))
+          break;
+
+	    System.out.println(name);
+      }
+	
+	//Prints Paul
+	As soon as a loop encounters a break, it exits the loop.
+
+  5.7.2 The continue statement
+    The continue statement is used to skip the remaining steps in the current iteration
+    and start with the next loop iteration.
+
+	  String[] programmers = {"Paul", "Shreya", "Selvan", "Harry"};
+	  for (String name : programmers) {
+	    if (name.equals("Shreya"))
+          continue;
+
+	    System.out.println(name);
+      }
+	  
+	  //Prints Paul Selvan Harry
+
+  5.7.3 Labeled statements
+    In Java, you can add labels to the following types of statements:
+     - A code block defined using {}
+     - All looping statements (for, enhanced for, while, do-while)
+     - Conditional constructs (if and switch statements)
+     - Expressions
+     - Assignments
+     - return statements
+     - try blocks
+     - throws statements
+	 
+    LABELED BREAK STATEMENTS
+	  You can use a labeled break statement to exit an outer loop.
+	  
+	    String[] programmers = {"Outer", "Inner"};
+		outer:
+		  for (String outer : programmers) {
+		    for (String inner : programmers) {
+		      if (inner.equals("Inner"))
+		         break outer;
+		      System.out.print(inner + ":");
+		    }
+		  }
+
+    LABELED CONTINUE STATEMENTS
+	  You can use a labeled continue statement to skip an iteration of the outer loop.
+	    
+		String[] programmers = {"Paul", "Shreya", "Selvan", "Harry"};
+		outer:
+		  for (String name1 : programmers) {
+		    for (String name : programmers) {
+		      if (name.equals("Shreya"))
+		         continue outer;
+		      System.out.println(name);
+		    }
+		  }

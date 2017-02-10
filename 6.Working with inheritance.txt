@@ -1,0 +1,608 @@
+6. Working with inheritance
+In the OCA Java SE 7 Programmer I exam, you’ll be asked questions on how to
+implement inheritance and polymorphism and how to use classes and interfaces.
+Hence, this chapter covers the following:
+ - Understanding and implementing inheritance
+ - Developing code that demonstrates the use of polymorphism
+ - Differentiating between the type of a reference and an object
+ - Determining when casting is required
+ - Using super and this to access objects and constructors
+ - Using abstract classes and interfaces
+ 
+  6.1 Inheritance with classes
+    When we discuss inheritance in the context of an object-oriented programming language
+    such as Java, we talk about how a class can inherit the properties and behavior
+    of another class. The class that inherits from another class can also define additional
+    properties and behaviors. The exam will ask you explicit questions about the need to
+    inherit classes and how to implement inheritance using classes.
+
+	6.1.1 Need to inherit classes
+	  Inheriting a class is also referred to as subclassing. The inherited classes
+      are also referred to as the superclass, base class, or parent class. The classes
+      that inherit are called subclasses, derived classes, extended 
+	  classes, or child classes.
+	  
+	  Why do you think you need to pull out the common properties and behaviors into
+      a separate class and make the sub-classes inherit it?
+	  
+	  - SMALLER DERIVED CLASS DEFINITIONS
+	  - EASE OF MODIFICATION TO COMMON PROPERTIES AND BEHAVIOR
+	  - EXTENSIBILITY
+	  - USE TRIED-AND-TESTED CODE FROM A BASE CLASS
+	  - CONCENTRATE ON THE SPECIALIZED BEHAVIOR OF YOUR CLASSES
+	  - LOGICAL STRUCTURES AND GROUPING
+	  
+    6.1.2 A derived class contains within it an object of its base class
+	  The classes Programmer and Manager inherit the variables and methods defined in the
+      class Employee and use them directly, as if they were defined in their own classes.
+	  
+	    class Employee {
+		  String name;
+		  String address;
+		  String phoneNumber;
+		  float experience;
+		}
+		class Manager extends Employee {
+		  int teamSize;
+		  void reportProjectStatus() {}
+		}
+		class Programmer extends Employee {
+		  String[] programmingLanguages;
+		  void writeCode() {}
+		  void accessBaseClassMembers() {
+		    name = "Programmer";
+		  }
+		}
+
+
+        *********************
+		*EXAM TIP: Inheritance enables you to reuse code that has already been
+		defined by a class. Inheritance can be implemented by extending a class.
+	
+    6.1.3 Which base class members are inherited by a derived class?
+	  The access modifiers play an important role in determining the inheritance of base
+      class members in derived classes. A derived class inherits all the non-private members
+      of its base class.
+	   - Default: Members with default access can be accessed in a derived class only if
+           base and derived classes reside in the same package.
+	   - Protected: Members with protected access are accessible to all the derived
+           classes, regardless of the packages in which the base and derived classes are defined.
+	   - Public: Members with public access are visible to all the other classes.
+
+    6.1.4 Which base class members aren’t inherited by a derived class?
+	  A derived class doesn’t inherit the following members:
+        - private members of the base class.
+        - Base class members with default access, if the base class and derived classes exist
+          in separate packages.
+        - Constructors of the base class. A derived class can call a base class’s constructors,
+		  but it doesn’t inherit them (section 6.5 discusses how a derived class can
+		  call a base class’s constructors using the implicit reference super).
+
+    6.1.5 Derived classes can define additional properties and behaviors
+	  Though derived classes are similar to their base classes, they generally also have differences.
+      Derived classes can define additional properties and behaviors. You may see
+      explicit questions on the exam about how a derived class can differ from its base class.
+	  
+	  When a derived class defines an instance or class variable with the same name as
+      one defined from its base class, only these new variables and methods are visible to
+      code using the derived class. When a derived class defines different code for a method
+      inherited from a base class by defining the method again, this method is treated as a
+      special method—an overridden method.
+	  
+    6.1.6 Abstract base class versus concrete base class
+	  The essence of an abstract class: it groups the common properties and behavior of its 
+	  derived classes, but it prevents itself from being instantiated. Also, an abstract class 
+	  can force all its derived classes to define their own implementations for a behavior by 
+	  defining it as an abstract method (a method without a body).
+	  
+	  It isn’t mandatory for an abstract class to define an abstract method. It may or
+      may not define any abstract methods. But if an abstract base class defines one or
+      more abstract methods, the class must be marked as abstract and the abstract
+      methods must be implemented in all its derived classes. If a derived class doesn’t
+      implement all the abstract methods defined by its base class, then it also needs to be
+      an abstract class.
+	  
+	  For the exam, you need to remember the following important points about implementing
+      inheritance using an abstract base class:
+	   - You can never create objects of an abstract class.
+	   - A base class can be defined as an abstract class, even if it doesn’t define any
+		 abstract methods.
+	   - A derived class should implement all the abstract methods of its base class. If it
+	     doesn’t, it must be defined as an abstract derived class.
+	   - You can use variables of an abstract base class to refer to objects of its derived
+         class (discussed in detail in section 6.3).
+    
+	@NOTE The terms base class, superclass, and parent class are used interchangeably.
+    Similarly, the terms derived class and subclass are also used interchangeably.
+
+  6.2 Use interfaces
+    Interfaces are abstract classes taken to extremes. An interface can define only
+    abstract methods and constants. All the members of an interface are implicitly public.
+	Though Java does not allow a class to inherit from more than one class, it allows a class
+    to implement multiple interfaces. A class uses the keyword implements to implement
+    an interface.
+
+        *********************
+		*EXAM TIP: The method signatures of a method defined in an interface and the
+		classes that implement the interface must match, or the classes won’t compile.
+
+  6.2.1 Properties of members of an interface
+    a. An interface can only define constants. Once it’s assigned, you can’t change the value
+       of a constant. The variables of an interface are implicitly public, final, and static.
+
+  	     interface MyInterface {
+            int age = 10;
+         }
+
+	   is equivalent to the following definition:
+
+	     interface MyInterface {             //public, static, and final modifiers are implicitly
+            public static final int AGE = 10; //added to variables defined in an interface. 
+         }
+	  
+    b. You should initialize all variables in an interface, or your code won’t compile.
+	     interface MyInterface {
+            int AGE;
+         }
+
+    c. The methods of an interface are implicitly public.
+	   
+	d. Unlike a class, an interface can’t define constructors.
+
+  6.2.2 Why a class can’t extend multiple classes
+  
+        *********************
+		*EXAM TIP: Because a derived class may inherit different implementations for
+		the same method signature from multiple base classes, multiple inheritance is
+		not allowed in Java.
+
+  6.2.3 Implementing multiple interfaces
+    In the previous section, you learned that a class can’t inherit multiple classes, but a class
+    can implement multiple interfaces. Also, an interface can extend multiple interfaces.
+	
+	POINTS TO NOTE ABOUT CLASS AND INTERFACE INHERITANCE:
+     - A class can inherit zero or one class.
+     - A class uses the keyword extends to inherit a class.
+     - A class can implement multiple interfaces.
+     - A class uses the keyword implements to implement an interface.
+     - An interface can’t implement any class.
+     - An interface can inherit zero or more interfaces.
+     - An interface uses the keyword extends to inherit interfaces.
+     - An abstract class can extend a concrete class and vice versa.
+     - An abstract class can implement interfaces.
+     - An abstract class can extend another abstract class.
+     - The first concrete class in the hierarchy must supply actual method implementations
+       for all abstract methods.
+	   
+6.3 Reference variable and object types
+
+  For this exam objective, you need to understand that when you refer to an object, the
+  type of the object reference variable and the type of the object being referred to may be different.
+  But there are rules on how different these can be. This concept may take a while
+  to sink in, so don’t worry if you don’t get it on your first attempt.
+  In the same way in which you can refer to a person using their first name, last
+  name, or both names, objects of derived classes can be referred to using a reference
+  variable of either of the following types:
+  
+   - Its own type—An object of a class HRExecutive can be referred to using an object
+     reference variable of type HRExecutive.
+   - Its base class—If the class HRExecutive inherits the class Employee, an object of
+     the class HRExecutive can be referred to using a variable of type Employee. If
+     the class Employee inherits the class Person, an object of the class HRExecutive
+     can also be referred to using a variable of type Person.
+   - Implemented interfaces—If the class HRExecutive implements the interface
+     Interviewer, an object of the class HRExecutive can be referred using a variable
+	 of type Interviewer.
+	 
+
+  There are differences, however, when you try to access an object using a reference
+  variable of its own type, its base class, or an implemented interface.
+
+    interface Interviewer {
+	  public void conductInterview();
+	}
+
+	class Employee {
+	  String name;
+	  String address;
+	  String phoneNumber;
+	  float experience;
+	}
+
+	class HRExecutive extends Employee implements Interviewer {
+	  String[] specialization;
+	  public void conductInterview() {
+		System.out.println("HRExecutive - conducting interview");
+	  }
+	}
+
+  6.3.1 Using a variable of the derived class to access its own object
+
+	class Office {
+
+	  public static void main(String args[]) {
+		HRExecutive hr = new HRExecutive();    //It's own type
+
+		//You can access variables and methods defined in it's base class, and the interface's implemented
+		hr.specialization = new String[] {"Staffing"};  //Access variable defined in class HRExecutive
+		System.out.println(hr.specialization[0]);
+
+		hr.name = "Pavni Gupta";                        //Access variable defined in class Employee
+		System.out.println(hr.name);
+
+		hr.conductInterview();                          //Access method defined in interface Interviewer
+
+	  }
+	}
+
+    Employee and the interface Interviewer. Can you do the same if the type of the reference
+    variable is changed to the class Employee, as defined in the next section?
+
+  6.3.2 Using a variable of the base class to access an object of a derived class
+
+    class Office {
+      public static void main(String args[]) {
+        Employee emp = new HRExecutive();
+      
+   	    emp.specialization = new String[] {"Staffing"};  //Variable emp can’t access member specialization
+        System.out.println(emp.specialization[0]);       //defined in class HRExecutive.
+        
+		emp.name = "Pavni Gupta";                        //Variable emp can access member
+        System.out.println(emp.name);                    //name defined in class Employee.
+        
+		                                                 //Variable emp can’t access method conductInterview 
+        emp.conductInterview();                          //defined in interface Interviewer.
+      }
+    }
+
+  ***The previous code fails to Compile.
+  Here’s another interesting equation: what happens when you change the type of the
+  reference variable to the interface Interviewer?
+
+  6.3.3 Using a variable of an implemented interface to access a derived class object
+    
+	class Office {
+	  public static void main(String args[]) {
+	    Interviewer interviewer = new HRExecutive();
+	
+        interviewer.specialization = new String[] {"Staffing"}; //Variable interviewer can’t access member 
+	    System.out.println(interviewer.specialization[0]);      //specialization defined in class HRExecutive.
+	    
+		interviewer.name = "Pavni Gupta";                         //Variable interviewer can't access member
+	    System.out.println(interviewer.name);                   //name defined in class Employee.
+		
+	                                                            //Variable interviewer can access method conductInterview 
+		interviewer.conductInterview();                         //defined in interface Interviewer.
+      }
+    }
+
+  ***The previous code fails to Compile.
+
+  6.3.4 The need for accessing an object using the variables of its base class or implemented interfaces
+    You may be wondering why you need a reference variable of a base class or an implemented
+    interface to access an object of a derived class if a variable can’t access all the
+    members that are available to an object of a derived class? The simple answer is that
+    you might not be interested in all the members of a derived class.
+	  Confused? Compare it with the following situation. When you enroll in flying classes,
+    do you care whether the instructor can cook Italian cuisine or knows how to swim? No!
+    You don’t care about characteristics and behavior that are unrelated to flying.
+
+	The class HRExecutive extends the class Employee and implements the interface
+    Interviewer. Hence, you can assign an object of HRExecutive to any of the following
+    types of variables:
+     - HRExecutive
+     - Employee
+     - Interviewer
+
+	Please note that the reverse of these assignments will fail compilation. To start with,
+    you can’t refer to an object of a base class by using a reference variable of its derived
+    class. Because all members of a derived class can’t be accessed using an object of the
+    base class, it isn’t allowed.
+	  
+	  HRExecutive hr = new Employee();    //Not allowed—won’t compile
+	  HRExecutive hr = new Interviewer(); //You can’t create an object of an interface-won't compile
+	
+        *********************
+		*EXAM TIP: You may see multiple questions in the exam that try to assign an
+		object of a base class to a reference variable of a derived class. Note that a
+		derived class can be referred to using a reference variable of its base class.
+		The reverse is not allowed and won’t compile
+
+  6.4 Casting
+    Casting is the process of forcefully making a variable behave as a variable of another
+    type. If a class shares an IS-A or inheritance relationship with another class or interface,
+    their variables can be cast to each other’s type.
+	
+	6.4.1 How to cast a variable to another type
+	  We’ll start with the definitions of interface Interviewer and classes HRExecutive
+      and Manager:
+
+	    interface Interviewer {
+		  public void conductInterview();
+		}
+	    class Employee {}
+		class HRExecutive extends Employee implements Interviewer {
+		  String[] specialization;
+		  public void conductInterview() {
+		    System.out.println("HRExecutive - conducting interview");
+		  }
+		}
+		class Manager implements Interviewer{
+		  int teamSize;
+		  public void conductInterview() {
+		    System.out.println("Manager - conducting interview");
+		  }
+		}
+		
+		Interviewer interviewer = new HRExecutive();
+        //interviewer.specialization = new String[] {"Staffing"};		//Won't compile
+		((HRExecutive) interviewer).specialization = new String[] {"Staffing"};
+      
+	  Casting is another method of telling Java: “Look, I know that the actual object being referred to
+	  is HRExecutive, even though I’m using a reference variable of type Interviewer.”
+
+   6.4.2 Need for casting
+	 
+	 class OfficeWhyCasting {
+	   public static void main(String args[]) {
+	     Interviewer[] interviewers = new Interviewer[2];
+	     interviewers[0] = new Manager();
+         interviewers[1] = new HRExecutive();
+         
+		 for (Interviewer interviewer : interviewers) {
+		   if (interviewer instanceof Manager) {
+		     int teamSize =((Manager)interviewer).teamSize;
+		     if (teamSize > 10) {
+			   interviewer.conductInterview();
+		     }else {
+			    System.out.println("Mgr can't " +
+			    "interview with team size less than 10");
+		     }
+	      }else if (interviewer instanceof HRExecutive) {
+            interviewer.conductInterview();
+          }
+        }
+      }
+    }
+
+  6.5 Use this and super to access objects and constructors
+    In this section, you’ll use the this and super keywords to access objects and constructors.
+    this and super are implicit object references. These variables are defined and initialized
+    by the JVM for every object in its memory.
+	
+	6.5.1 Object reference: this
+	  The this reference always points to an object’s own instance. Any object can use the this 
+	  reference to refer to its own instance.
+	  
+	   - USING THIS TO ACCESS VARIABLES AND METHODS
+	   The this reference may be used only when code executing within a method block
+	   needs to differentiate between an instance variable and its local variable or method
+	   parameters. But some developers use the keyword this all over their code, even when
+	   it’s not required. Some use this as a means to differentiate instance variables from
+	   local variables or method parameters.
+
+	     class Employee {
+		   String name;
+		   Employee(String name) {
+		     this.name = name;
+		   }
+		 }
+
+       - USING THIS TO ACCESS CONSTRUCTORS
+	   You can also differentiate one constructor from another by using the keyword this.
+	   Here’s an example in which the class Employee defines two constructors, with the second
+	   constructor calling the first one
+	   
+	     class Employee {
+		   String name;
+		   String address;
+		   
+		   Employee() {
+			 name = "NoName";
+			 address = "NoAddress";
+		   }
+		   Employee(String name) {
+		     this.name = name;
+		   }
+		   Employee(String name, String address) {
+		     this(name);
+		     this.address = address;
+		   }
+		   Employee(String name, String address) {
+			 this();
+			 if (name != null) this.name = name;
+			 if (address != null) this.address = address;
+		   }
+		 }
+	   
+	   To call the default constructor (one that doesn’t accept any method parameters), call this().
+	   If present, a call to a constructor from another constructor must be done on the first
+       line of code of the calling constructor.
+
+        *********************
+		*EXAM TIP: this refers to the instance of the class in which it’s used. this can
+		be used to access the inherited members of a base class in the derived class.
+
+     6.5.2 Object reference: super
+	   In the previous section, I discussed how this refers to the
+       object instance itself. Similarly, super is also an object reference,
+       but super refers to the parent or base class of a class.
+	  
+	   - USING SUPER TO ACCESS VARIABLES AND METHODS OF THE BASE CLASS
+	   The variable reference super can be used to access a variable
+       or method from the base class if there’s a clash
+	   between these names
+
+	     class Employee {
+		   String name;
+		 }
+		 class Programmer extends Employee {
+		   String name;
+		   void setNames() {
+		     this.name = "Programmer";
+		     super.name = "Employee";
+		   }
+		   void printNames() {
+		     System.out.println(super.name);
+	 		System.out.println(this.name);
+           }
+         }
+	     class UsingThisAndSuper {
+           public static void main(String[] args) {
+             Programmer programmer = new Programmer();
+             programmer.setNames();
+             programmer.printNames();
+           }
+         }
+
+       - USING SUPER TO ACCESS CONSTRUCTORS OF BASE CLASS	   
+	   The reference variable super can also be used to refer to the constructors of the base
+       class in a derived class.
+	   
+	   class Employee {
+		 String name;
+		 String address;
+		 Employee(String name, String address) {
+		   this.name = name;
+		   this.address = address;
+		 }
+	   }
+	   class Programmer extends Employee {
+		 String progLanguage;
+		 Programmer(String name, String address, String progLang) {
+		   super(name, address);
+		   this.progLanguage = progLang;
+		 }
+	   }
+	   
+        *********************
+		*EXAM TIP: If present, a call to a superclass’s constructor must be the first
+		statement in a derived class’s constructor. Otherwise, a call to super(); (the
+		no-arg constructor) is inserted automatically by the compiler.
+
+       - USING SUPER AND THIS IN STATIC METHODS
+	   The keywords super and this are implicit object references. Because static methods
+	   belong to a class, not to objects of a class, you can’t use this and super in static
+	   methods. Code that tries to do so won’t compile:
+	   
+	     class Employee {
+		   String name;
+		 }
+		 class Programmer extends Employee {
+		   String name;
+		   static void setNames() {
+		     this.name = "Programmer";
+		     super.name = "Employee";
+		   }
+	     }
+
+    6.6 Polymorphism
+	The literal meaning of the word "polymorphism" is "many forms." At the beginning of
+	this chapter, I used a practical example to explain the meaning of polymorphism; the
+	same action may have different meanings for different living beings.
+	For the exam, you need to know what polymorphism in Java is, why you need it,
+    and how to implement it in code.
+	
+	  6.6.1 Polymorphism with classes
+	  Polymorphism comes into the picture when a class inherits another class and both the
+	  base and the derived classes define methods with the same method signature (the same
+	  method name and method parameters).
+	  
+	  - POLYMORPHIC METHODS ARE ALSO CALLED OVERRIDDEN METHODS
+	  This is a contract specified to define overridden methods. Failing to use the same method name, 
+	  same argument list, or same return type won’t mark a method as an overridden method.
+	  
+        *********************
+		*EXAM TIP: To implement polymorphism with classes, you can define abstract or
+		non-abstract methods in the base class and override them in the derived classes.
+
+      - CAN POLYMORPHISM WORK WITH OVERLOADED METHODS?
+	  No, polymorphism works only with overridden methods. Overridden methods have the
+	  same number and type of method arguments, whereas overloaded methods define a
+	  method argument list with either a different number or type of method parameters.
+	  Overloaded methods only share the same name; the JRE treats them like different
+	  methods. In the case of overridden methods, the JRE decides at runtime which
+	  method should be called based on the exact type of the object on which it’s called.
+
+      6.6.2 Binding of variables and methods at compile time and runtime
+	  You can use reference variables of a base class to refer to an object of a derived class.
+	  But there’s a major difference in how Java accesses the variables and methods for
+	  these objects. With inheritance, the instance variables bind at compile time and the
+	  methods bind at runtime.
+	  
+	    class Employee {
+		   String name = "Employee";
+		   void printName() {
+		      System.out.println(name);
+		   }
+		}
+		class Programmer extends Employee {
+		   String name = "Programmer";
+		   void printName() {
+		      System.out.println(name);
+		   }
+		}
+		class Office1 {
+		   public static void main(String[] args) {
+		      Employee emp = new Employee();
+		      Employee programmer = new Programmer();
+		      System.out.println(emp.name);
+		      System.out.println(programmer.name);
+		      emp.printName();
+		      programmer.printName();
+		   }
+		}
+		
+      The output of the preceding code is as follows:
+	  Employee
+	  Employee
+	  Employee
+	  Programmer
+		
+        *********************
+		*EXAM TIP: Watch out for code in the exam that uses variables of the base class
+		to refer to objects of the derived class and then accesses variables and methods
+		of the referenced object. Remember that variables bind at compile time,
+		whereas methods bind at runtime.
+		
+    6.6.3 Polymorphism with interfaces
+ 	  Polymorphism can also be implemented using interfaces. Whereas polymorphism
+ 	  with classes has a class as the base class, polymorphism with interfaces requires a
+      class to implement an interface. Polymorphism with interfaces always involves
+      abstract methods from the implemented interface because interfaces can define
+      only abstract methods.
+	    
+		interface MobileAppExpert {
+          void deliverMobileApp();
+        }
+		class Employee {}
+        class Programmer extends Employee implements MobileAppExpert {
+		  public void deliverMobileApp() {
+            System.out.println("testing complete on real device");
+          }
+       }
+	   class Manager extends Employee implements MobileAppExpert {
+		 public void deliverMobileApp() {
+		   System.out.println("QA complete");
+		   System.out.println("code delivered with release notes");
+		 }
+	  }
+	  class PolymorphismWithInterfaces {
+	    public static void main(String[] args) {
+		  MobileAppExpert expert1 = new Programmer();
+		  MobileAppExpert expert2 = new Manager();
+		  expert1.deliverMobileApp();
+		  expert2.deliverMobileApp();
+		}
+	  }
+	  
+	  The output of the preceding code is as follows:
+      testing complete on real device
+      QA complete
+      code delivered with release notes
+	  
+        *********************
+		*EXAM TIP: Watch out for overloaded methods that seem to participate in
+		polymorphism—overloaded methods don’t participate in polymorphism.
+		Only overridden methods—methods with the same method signatures—participate
+		in polymorphism.

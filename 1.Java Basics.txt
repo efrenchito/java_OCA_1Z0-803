@@ -1,0 +1,492 @@
+This chapter will cover the following:
+-> Understanding the structure and components of a Java class
+-> Understanding executable Java applications
+-> Understanding Java packages
+-> Importing Java packages into your code
+-> Applying access and nonaccess modifiers
+
+1.1 The structure of a Java class and source code file
+
+  - 1.1.1 Structure of a Java class
+	 + The package statement
+	 + The import statement
+	 + Comments
+	 + Class declarations and definitions
+	 + Variables
+	 + Methods
+	 + Constructors
+	 
+	 [package statement;]
+     [import statement(s);]
+     [comment(s);]
+     class declaration: [AccessModifier]|[NonAccessModifier]|<class keyword>|ClassName|[<extend> BaseClassName]|[<implements> InterfaceNameToImplem]
+	 class definition:  {ClassBody}
+	 
+	 
+
+	 + PACKAGE STATEMENT
+	   All Java classes are part of a package. A Java class can be explicitly defined in a named
+	   package; otherwise it becomes part of a default package, which doesn’t have a name.
+	     -> If a class includes a package statement, it must be the first statement in the class definition:
+	     -> Also, if present, the package statement must appear exactly once in a class.
+
+	 + IMPORT STATEMENT
+	   Classes and interfaces in the same package can use each other without prefixing their
+	   names with the package name. But to use a class or an interface from another package,
+	   you must use its fully qualified name. Because this can be tedious and can make your code
+	   difficult to read, you can use the import statement to use the simple name of a class
+	   or interface in your code.
+
+	 + COMMENTS
+	   You can also add comments to your Java code. Comments can appear at multiple places in a class. 
+	   Comments can appear every-where. Comments come in two flavors: multiline comments and end-of-line comments.
+		 + Multiline comments: 
+		   - start with /* and end with */
+		   - could contain special characters in it
+		 + End-of-line comments: 
+		   - start with // 
+		   - as evident by their name, they are placed at the end of a line of code.
+
+	  + CLASS DECLARATION
+		The class declaration marks the start of a class. 
+		It can be as simple as the keyword class followed by the name of a class:
+		+ The declaration of a class is composed of the following parts:
+		  - Access modifiers
+		  - Nonaccess modifiers
+		  - Class name
+		  - Name of the base class, if the class is extending another class
+		  - All implemented interfaces, if the class is implementing any interfaces
+		  - Class body (class fields, methods, constructors), included within a pair of curly braces, {}
+
+	  + CLASSS DEFINITION
+		A class is a design used to specify the properties and behavior of an object. The properties of 
+		an object are implemented using VARIABLES, and the behavior is implemented using METHODS.
+		+ Points to remember:
+		  - A class name starts with the keyword class. Java is case sEnSiTiVe class isn't the same as Class (uppercase C).
+		  - The state of a class is designed using attributes or instance variables.
+		  - The behavior is defined using methods.
+		  - A class definition may also include comments and constructors.
+
+	  + VARIABLES
+		Variables are used to store the state of an object. They are called instance variables
+		or instance attributes what that means is that values won't change for other objects.
+		A single copy of a class variable or static variable is shared by all the objects of a class.
+		
+	  + METHODS
+		Instance methods are generally used to manipulate the instance variables.
+		A class method or static method is used to work with the static variables.
+
+	  + CONSTRUCTORS
+		A class constructor is used to create and initialize the object of a class.
+		A class can define multiple constructors that accept different sets of method parameters.
+
+  - 1.1.2 Structure and components of a Java source code file.
+	  A Java source code file is used to define classes and interfaces. All your Java code
+	  should be defined in Java source code files (text files whose names end with .java).
+	  + Definition of a class and an interface in a Java source code file.
+	  + Definition of single or multiple classes and interfaces within the same Java source code file.
+	  + Application of import and package statements to all the classes in a Java source code file.
+	  
+	  + DEFINITION OF INTERFACES IN A JAVA SOURCE CODE FILE
+		An interface is a grouping of related methods and constants, but the methods in an
+		interface cannot define any implementation. An interface specifies a contract for the
+		classes to implement.
+	  
+		interface Controls {
+			void changeChannel( int channelNumber);
+			void increaseVolume();
+			void decreaseVolume();
+		}
+
+	  + DEFINITION OF SINGLE AND MULTIPLE CLASSES IN A SINGLE JAVA SOURCE CODE FILE
+		You can define single/multiple class(es) or interface(s) in a single Java source code file. 
+
+		*********************
+		*EXAM TIP: The classes and interfaces can be defined in any order of occurrence in a Java source code file
+		
+		If you define a public class/interface its name should match the name of the Java source code file. 
+		Also, a source code file can’t define more than one public class or interface.
+
+	  + APPLICATION OF PACKAGE AND IMPORT STATEMENTS IN JAVA SOURCE CODE FILES
+		I mentioned that you can define multiple classes and interfaces in the same Java source code file. When you use a package or import statement within such Java files, both the package and import statements apply to all of the classes and interfaces defined in that source code file.
+		
+		*********************
+		*EXAM TIP: Classes and interfaces defined in the same Java source code file
+		can’t be defined in separate packages. Classes and interfaces imported using
+		the import statement are available to all the classes and interfaces defined in
+		the same Java source code file.
+
+1.2 Executable Java Applications
+
+	1.2.1 Executable Java classes versus nonexecutable Java classes
+	  Definition: An executable Java class is a class which, when handled over to the JVM, starts its
+	  execution at a particular point in the class—main method, defined in the class.
+	 
+	1.2.2 Main method
+	  The first requirement in creating an executable Java application is to create a clas with a method 
+	  whose signature (name and method arguments) match the main method, defined as follows:
+
+		public class HelloExam {
+			public static void main(String args[]) {
+				System.out.println("Hello exam");
+			}
+		}
+
+	  The name of the String array passed to the main method need not be args to qualify it as the correct main method.	
+	  To define an array, the square brackets, [], can follow either the variable name or its type. 
+	  The following is a correct method declaration of the main method:
+	  
+		 public static void main(String[] args)
+		 public static void main(String arguments[])
+		 public static void main(String[] HelloWorld)
+
+	  It’s valid to define the method parameter passed to the main method as a variable argument (varargs) of type String:
+
+		public static void main(String... args)
+
+	  It’s interesting to note that the placement of the keywords public and static can be interchanged.
+	  
+		static public void main(String[] args)
+
+	  *EXAM TIP: The method parameters that are passed on to the main method are also called command-line parameters or command-line values. 
+	   As the name implies, these values are passed on to a method from the command line.
+
+1.3 Java packages
+  -> see uno.Test1 dos.Test2
+     ...
+       cd  Z:\Oracle\JavaPractice\1Z0-803\Chapter1\
+       java dos.Test2
+     ...
+
+
+	1.3.1 The need for packages
+	  We’ve learned that before starting to import other classes into your own code, it’s important to understand what the packaged classes are, how packaged and nonpackaged classes differ, and why you need to import the packaged classes.
+	  Packaged classes are part of a named package—a namespace—and they’re defined as being part of a package by including a package statement in a class. All classes and interfaces are packaged. If you don’t include an explicit package statement in a class or an interface, it’s part of a default package.
+
+	1.3.2 Defining classes in a package using the package statement
+	  You can define which classes and interfaces are in a package by using the package
+	  statement as the first statement in your class or interface.
+	  
+		package certification;
+		class ExamQuestion {
+		//..code
+		}
+
+	  Rules to remember
+	  - Per Java naming conventions, package names should all be in lowercase.
+	  - The package and subpackage names are separated using a dot (.).
+	  - Package names follow the rules defined for valid identifiers in Java.
+	  - For packaged classes and interfaces, the package statement is the first statement
+		in a Java source file (a .java file). The exception is that comments can appear
+		before or after a package statement.
+	  - There can be a maximum of one package statement per Java source code file (.java file).
+	  - All the classes and interfaces defined in a Java source code file will be defined in
+		the same package. There is no way to package classes and interfaces defined
+		within the same Java source code file in different packages.
+
+		@NOTE A fully qualified name for a class or interface is formed by prefixing its
+		 package name with its name (separated by a period).
+	  
+	  DIRECTORY STRUCTURE AND PACKAGE HIERARCHY
+		The hierarchy of the packaged classes should match the hierarchy of the directories
+		in which these classes and interfaces are defined in the code.
+
+	  SETTING THE CLASSPATH FOR PACKAGED CLASSES
+		To enable the Java Runtime Environment (JRE) to find your classes, add the base
+		directory that contains your packaged Java code to the classpath.
+
+	1.3.3 Using simple names with import statements
+	  The import statement enables you to use simple names instead of using fully qualified
+	  names for classes and interfaces defined in separate packages.
+	  
+		@NOTE The import statement doesn’t embed the contents of the imported
+		class in your class, which means that importing more classes doesn’t increase
+		the size of your own class. It lets you use the simple name for a class or interface
+		defined in a separate package.
+
+	1.3.4 Using packaged classes without using the import statement
+	  It is possible to use a packaged class or interface without using the import statement,
+	  by using its fully qualified name. It’s important to note that you can’t use the import 
+	  statement to access multiple classes or interfaces with the same names from different packages.
+
+	  class AnnualExam {
+		java.util.Date date1;
+		java.sql.Date date2;
+	  }
+	  
+	  Code to import classes with the same name from different packages won’t compile
+	  import java.util.Date;
+	  import java.sql.Date;
+	   class AnnualExam { }
+
+	1.3.5 Importing a single member versus all members of a package
+	  By using the wildcard character, an asterisk (*), you can import all of the public
+	  members, classes, and interfaces of a package.
+
+	1.3.6 Can you recursively import subpackages?
+	  You can’t import classes from a subpackage by using an asterisk in the import statement.
+
+	1.3.7 Importing classes from the default package
+	  Classes which are not defined in an explicit package, can use each other if they are defined in the same directory.
+	  A class from a default package can’t be used in any named packaged class, regardless of whether they are defined 
+	  within the same directory or not.
+
+	1.3.8 Static imports
+	  You can import an individual static member of a class or all its static members by
+  using the import static statement.
+
+1.4 Java access modifiers 
+  In this section, we’ll cover all of the access modifiers—public, protected, and
+  private—as well as default access, which is the result when you don’t use an access
+  modifier. We’ll also look at how you can use access modifiers to restrict the visibility of
+  a class and its members in the same and separate packages.
+  
+	1.4.1 Access modifiers—public
+	   @NOTE A top-level class is a class that isn’t defined within any other class. A
+	   class that is defined within another class is called a nested or inner class. Nested
+	   and inner classes aren’t on the OCA Java SE 7 Programmer I exam.
+
+	  WHAT DO THEY CONTROL?
+		By using the appropriate access modifiers, you can limit access to your class or interface, 
+		and their members, by other classes and interfaces.
+	  
+	  CAN ACCESS MODIFIERS BE APPLIED TO ALL TYPES OF JAVA ENTITIES?
+		Access modifiers can be applied to classes, interfaces, and their members (instance and
+		class variables and methods). Local variables and method parameters can’t be defined
+		using access modifiers. An attempt to do so will prevent the code from compiling.
+
+	  HOW MANY ACCESS MODIFIERS ARE THERE: THREE OR FOUR?
+		If a Java entity (class,interface, method, or variable) isn’t defined using an explicit 
+		access modifier, it is said to be defined using the default access, also called package access.
+		
+		Java defines four access modifiers:
+		 - public (least restrictive)
+		 - protected
+		 - default
+		 - private (most restrictive)
+
+	1.4.2 Public access modifier
+	  Classes and interfaces defined using the public access modifier are accessible across all packages, 
+	  from derived to unrelated classes.
+
+	1.4.3 Protected access modifier
+	  The members of a class defined using the protected access modifier are accessible to
+	   - Classes and interfaces defined in the same package
+	   - All derived classes, even if they’re defined in separate packages
+
+	1.4.4 Default access (package access)
+	  The members of a class defined without using any explicit access modifier are defined
+	  with package accessibility (also called default accessibility). The members with package
+	  access are only accessible to classes and interfaces defined in the same package.
+	  
+
+			*********************
+			*EXAM TIP: A concise but not too simple way of stating the previous rule is this: a
+			derived class can inherit and access protected members of its base class, regardless
+			of the package in which it’s defined. A derived class in a separate package
+			can’t access protected members of its base class using reference variables.
+	  
+	  DEFINING A CLASS BOOK WITH DEFAULT ACCESS
+	  A class defined with default (package) access is visible and accessible only from within 
+	  the package in which it is defined.
+
+			*********************
+			*EXAM TIP: Default access can be compared to package-private (accessible
+			only within a package) and protected access can be compared to packageprivate
+			+ kids (“kids” refer to derived classes). Kids can access protected
+			methods only by inheritance and not by reference (accessing members by
+			using the dot operator on an object).
+
+	1.4.5 Private access modifier
+	  The private access modifier is the most restrictive access modifier. The members of a
+	  class defined using the private access modifier are accessible only to themselves.
+
+1.5 Nonaccess modifiers
+  This section discusses the nonaccess modifiers abstract, final, and static.
+  Access modifiers control the accessibility of your class and its members outside the
+  class and the package. Nonaccess modifiers change the default properties of a Java class
+  and its members.
+  
+  You can characterize your classes, interfaces, methods, and variables with the following
+  nonaccess modifiers (though not all are applicable to each Java entity):
+   - abstract
+   - static
+   - final
+   - synchronized
+   - native
+   - strictfp
+   - transient
+   - volatile
+   
+   ** The OCA Java SE 7 Programmer I exam covers only three of these nonaccess modifiers:
+   abstract, final, and static, which I’ll cover in detail.
+
+	1.5.1 Abstract modifier
+	  ABSTRACT CLASS
+	  When the abstract keyword is prefixed to the definition of a concrete class, it
+	  changes it to an abstract class, even if the class doesn’t define any abstract methods.
+	  An abstract class can’t be instantiated.
+
+	  			*********************
+				*EXAM TIP: An abstract class may or may not define an abstract method;
+				you can define an abstract class without any abstract methods. But a concrete
+				class can’t define an abstract method.
+
+	  ABSTRACT INTERFACE
+	  An interface is an abstract entity by default. The Java compiler automatically adds the
+	  keyword abstract to the definition of an interface. Thus, adding the keyword
+	  abstract to the definition of an interface is redundant.
+	  
+	    interface Movable {}
+		abstract interface Movable {}
+	  
+	  ABSTRACT METHOD
+	  An abstract method doesn’t have a body. Usually, an abstract method is implemented
+	  by a derived class. Here’s an example:
+
+	     abstract class Person {
+			private String name;
+			public void displayName() { }
+			public abstract void perform();
+		}
+				*********************
+				*EXAM TIP: A method with an empty body isn’t an abstract method
+				           An abstract method should be declared whitin an abstract class otherwise will not compile
+
+	  ABSTRACT VARIABLES
+	  None of the different types of variables (instance, static, local, and method parameters)
+	  can be defined as abstract.
+
+				*********************
+				*EXAM TIP: Don’t be tricked by code that tries to apply the nonaccess modifier
+	            abstract to a variable. Such code won’t compile
+
+	1.5.2 Final modifier
+	  The keyword final changes the default behavior of a class, variable, or method.
+
+	  FINAL CLASS
+	  A class that is marked final cannot be extended by another class. The class Professor
+	  will not compile if the class Person is marked as final, as follows:
+	  
+	    final class Person {}
+	    class Professor extends Person {}  --> Won't compile
+
+	  FINAL INTERFACE
+	  An interface cannot be marked as final. An interface is abstract by default and
+	  marking it with final will prevent your interface from compiling:
+	  
+	     final interface MyInterface{}     --> Won't compile
+
+	  FINAL VARIABLE
+	  A final variable can’t be reassigned a value. It can be assigned a value only once. See
+	  the following code:
+
+	    class Person {
+	      final long MAX_AGE;
+	      Person() {
+	        MAX_AGE = 99;
+	      }
+	    }
+
+	  FINAL METHOD
+	  A final method defined in a base class can’t be overridden by a derived class. Examine
+	  the following code:
+
+	    class Person {
+		  final void sing() {
+		    System.out.println("la..la..la..");
+		  }
+		}
+		class Professor extends Person {
+		  void sing() {                                  //Won't compile
+		    System.out.println("Alpha.. beta.. gamma");
+		  }
+		}
+
+	1.5.3 Static modifier
+	  The nonaccess modifier static, when applied to the definitions of variables, methods,
+	  classes, and interfaces, changes their default behavior.
+
+	  STATIC VARIABLES
+	  Static variables belong to a class. They are common to all instances of a class and aren’t 
+	  unique to any instance of a class. Static attributes exist independently of any instances of 
+	  a class and may be accessed even when no instances of the class have been created.
+	  Think of a static variable as being like a WIKY that’s shared by the employees of an organization. 
+	  Each of the employees accesses the same WIKY, so any change made by one employee is visible to all the other employees.
+
+				*********************
+				*EXAM TIP: A static variable can be accessed using the name of the object
+				reference variable or the name of a class.
+
+	  STATIC METHODS
+	  static methods aren’t associated with objects and can’t use any of the instance variables
+	  of a class. You can define static methods to access or manipulate static variables:
+
+	    class Emp {
+			String name;
+			static int bankVault;
+			static int getBankVaultValue() {
+			return bankVault;
+			}
+		}
+	  
+	  You can also use static methods to define utility methods, which are methods that usually
+	  manipulate the method parameters to compute and return an appropriate value
+	  
+	    static double interest(double num1, double num2, double num3) {
+		  return(num1+num2+num3)/3;
+		}
+
+		@NOTE: Even though you can use an object reference variable to access static members, 
+		it’s not advisable to do so. Because static members belong to a class and not to individual objects, 
+		using object reference variables to access static members may make them appear to belong to an object. 
+		The proper way to access them is by using the class name.
+
+				*********************
+				*EXAM TIP: Static methods and variables can’t access the instance members of a class.
+
+	    STATIC CLASSES AND INTERFACES
+		Certification aspirants frequently ask questions about static classes and interfaces,
+		so I’ll quickly cover these in this section to ward off any confusion related to them. But
+		note that static classes and interfaces are types of nested classes and interfaces
+		that aren’t covered by the OCA Java 7 Programmer I exam.
+		
+		You can’t prefix the definition of a top-level class or an interface with the keyword
+	    static. A top-level class or interface is one that isn’t defined within another class or
+	    interface. The following code will fail to compile:
+
+		  static class Person {}
+	      static interface MyInterface {}
+	    
+		But you can define a class and an interface as a static member of another class. The
+	    following code is valid:
+
+		  class Person {
+	        static class Address {}
+	        static interface MyInterface {}
+	      }
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+@SAMPLE EXAM QUESTIONS
+
+Q1-1. What are the valid components of a Java source file (choose all that apply):
+  a package statement
+  b import statements
+  c methods
+  d variables
+  e Java compiler
+  f Java Runtime Environment
+
+Q1-2. The following numbered list of Java class components is not in any particular
+order. Select the correct order of their occurrence in a Java class (choose all that apply):
+  1 comments
+  2 import statement
+  3 package statement
+  4 methods
+  5 class declaration
+  6 variables
+
+  a 1, 3, 2, 5, 6, 4
+  b 3, 1, 2, 5, 4, 6
+  c 3, 2, 1, 4, 5, 6
+  d 3, 2, 1, 5, 6, 4
