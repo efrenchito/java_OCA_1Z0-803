@@ -1,0 +1,29 @@
+4.String, StringBuilder, Arrays and ArrayList
+@4.1 Welcome to the World of the String class
+    4.1.1 Creating String objects
+      String str1 = new String("Paul");  //String(literalValue)|String(char[])|String(StringBuilder)|String(S)|String(StringBuffer)
+      String str2 = str1;
+      String str3 = "Lorem Ipsum dolor sit amet";
+      -> STRING CONSTANT POOL. literal values are created in here
+      -> The operator == compares the addresses of the objects referred to by the variables. 
+       @EXCEPTION: passing a null argument to a constructor or method in this class will cause a NullPointerException to be thrown.
+    4.1.2 The class String is immutable
+    	//String.java
+          public final class String extends Object implements Serializable, Comparable<String>, CharSequence {
+            private final char[] value:
+            //The res of the code of class String
+          }
+      String uses a char array to stores its values
+      String uses a final variable to stores its value
+      Methods of String don't modify char array 
+    4.1.3 Methods of the class String
+      • Query positions of char: 
+        -> charAt(int index): Could throws StringIndexOutOfBoundsException
+        -> indexOf(int ch)|indexOf(int ch, int fromIndex)|indexOf(String str)|indexOf(String str, int fromIndex): 
+            When search is not found then returns -1. 
+            indexOf(flt)|indexOf(st) -> Won't compile
+        -> substring(int startPos)
+           substring(int startPos, int endPos)
+        **PITFALLS: charAt(floatVal) -> Won't compile no suitable method found for charAt(float).
+      • Seem to modify String:   substring, trim, replace
+      • Others:                  length, startsWith, endWith

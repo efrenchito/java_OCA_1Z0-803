@@ -1,300 +1,305 @@
 /*
 4. String, StringBuilder, Arrays, and ArrayList
-In the OCA Java SE 7 Programmer I exam, you’ll be asked many questions about how to
-create, modify, and delete String objects, StringBuilder objects, arrays, and Array-
-List objects.
+  In the OCA Java SE 7 Programmer I exam, you’ll be asked many questions about how:  
+  create, modify, and delete String objects, StringBuilder objects, arrays, and Array-List objects.
 
-In this chapter, we’ll cover the following:
- - Creating and manipulating String and StringBuilder objects
- - Using common methods from class String and StringBuilder
- - Creating and using one-dimensional and multidimensional arrays in single and multiple steps
- - Accessing elements in asymmetric multidimensional arrays
- - Declaring, creating, and using an ArrayList and understanding the advantages of an ArrayList over arrays
- - Using methods that add, modify, and delete elements of an ArrayList
+  In this chapter, we’ll cover the following:
+   - Creating and manipulating String and StringBuilder objects
+   - Using common methods from class String and StringBuilder
+   - Creating and using one-dimensional and multidimensional arrays in single and multiple steps
+   - Accessing elements in asymmetric multidimensional arrays
+   - Declaring, creating, and using an ArrayList and understanding the advantages of an ArrayList over arrays
+   - Using methods that add, modify, and delete elements of an ArrayList
  
-4.1 Welcome to the world of the String class
-  In this section, we’ll cover the class String defined in the Java API in the java.lang
-  package. The String class represents character strings.
+    4.1 Welcome to the world of the String class
+      In this section, we’ll cover the class String defined in the Java API in the java.lang
+      package. The String class represents character strings.
 
-4.1.1 Creating String objects
-  You can create objects of the class String by using the new operator, by using the
-  assignment operator (=), or by enclosing a value within double quotes ("). But you
-  may have noticed a big difference in how these objects are created, stored, and
-  referred by Java.
-*/
-  String str1 = new String("Paul");
-	String str2 = new String("Paul");
-	System.out.println(str1 == str2); //Prints false
-/*
-The operator == compares the addresses of the objects referred to by the variables.
+      4.1.1 Creating String objects
+        You can create objects of the class String:
+          • by using the new operator
+          • by using the assignment operator (=)
+          • or by enclosing a value within double quotes ("). 
 
-  @NOTE: String objects created using the assignment operator (=) are created in the pool
-  of String objects, those may refer to the same object if they store the same sequence of
-  characters. String objects created with a constructor aren't created in the pool of String objects.
-*/
-    String morning2 = new String("Morning");
-    System.out.println("Morning" == morning2);  //Prints false
-/*
-  The terms “String constant pool” and “String pool” are used interchangeably and refer to the same pool 
-  of String objects. Because String objects are immutable, the pool of String objects is also called the
-  “String constant pool.” You may see either of these terms on the exam.
-  
-  You can also invoke other overloaded constructors of class String to create its objects
-  by using the operator new:
-*/
-  String girl = new String("Shreya");                       //String constructor that accepts a String
-  char[] name = new char[]{'P','a','u','l'}; 
-  String boy = new String(name);                            //String constructor that accepts a char array
-	StringBuilder sd1 = new StringBuilder("String Builder");
-  String str5 = new String(sd1);                            //String constructor that accepts object of StringBuilder
-  StringBuffer sb2 = new StringBuffer("String Buffer");
-  String str6 = new String(sb2);                            //String constructor that accepts object of StringBuffer
-    
-//Because String is a class, you can assign null to it, as shown in the next example:
-  String empName = null;
-/*
-    *********************
-		*EXAM TIP: If a String object is created using the keyword new, it always results
-	    in the creation of a new String object. A new String object gets created
-		using the assignment operator (=) or double quotes only if a matching
-		String object with the same value isn’t found in the String constant pool.
+        But you may have noticed a big difference in how these objects are created, stored, and referred by Java.
+        The operator == compares the addresses of the objects referred to by the variables.
+          */
+          String str1 = new String("Paul");
+      	  String str2 = new String("Paul");
+      	  System.out.println(str1 == str2); //Prints false
+          /*
+        
 
-4.1.2 The class String is immutable
-  The concept that the class String is immutable is an important point to remember.
-  Once created, the contents of an object of the class String can never be modified.
-  The immutability of String objects helps the JVM reuse String objects, reducing
-  memory overhead and increasing performance.
+        @NOTE: String objects created using the assignment operator (=) are created in the pool
+        of String objects, those may refer to the same object if they store the same sequence of
+        characters. String objects created with a constructor aren't created in the pool of String objects.
+          */
+          String morning2 = new String("Morning");
+          System.out.println("Morning" == morning2);  //Prints false
+          /*
 
-  Let’s take a quick look at how the immutability of class String is implemented by
-  the authors of this class:
-   - The class String stores its values in a private variable of the type char array
-     (char value[]). Arrays are fixed in size and don’t grow once initialized.
-   - This value variable is marked as final in the class String. Note that final is a
-     nonaccess modifier, and a final variable can be initialized only once.
-   - None of the methods defined in the class String manipulate the individual elements
-     of the array value.
-*/
-	 public final class String
-       implements java.io.Serializable, Comparable<String>, CharSequence
-    {
-      private final char value[];
-	  
-	  //The rest of the code of the class String
-    }
-/*
-STRING USES A CHAR ARRAY TO STORE ITS VALUE
-  The String value is stored in an array of type char. Remember that an array stores its first
-  value at position 0.
-
-STRING USES FINAL VARIABLE TO STORE ITS VALUE
-  The variable value, which is used to store the value of a String object, is marked as final. 
-  The basic characteristic of a final variable is that it can initialize a value only once.
-  
-METHODS OF STRING DON’T MODIFY THE CHAR ARRAY
-  Although we can’t reassign a value to a final char array we can reassign its individual characters.
-  All the methods defined in the class String, such as substring, concat, toLowerCase,
-  toUpperCase, trim, and so on, which seem to modify the contents of the String object on
-  which they’re called, create and return a new String object, rather than modifying the
-  existing value.
+        The terms “String constant pool” and “String pool” are used interchangeably and refer to the same pool 
+        of String objects. Because String objects are immutable, the pool of String objects is also called the
+        “String constant pool.” You may see either of these terms on the exam.
+        
+        You can also invoke other overloaded constructors of class String to create its objects
+        by using the operator new:
+        */
+        String girl = new String("Shreya");                       //String constructor that accepts a String
+        char[] name = new char[]{'P','a','u','l'}; 
+        String boy = new String(name);                            //String constructor that accepts a char array
+      	StringBuilder sd1 = new StringBuilder("String Builder");
+        String str5 = new String(sd1);                            //String constructor that accepts object of StringBuilder
+        StringBuffer sb2 = new StringBuffer("String Buffer");
+        String str6 = new String(sb2);                            //String constructor that accepts object of StringBuffer
+          
+        //Because String is a class, you can assign null to it, as shown in the next example:
+        String empName = null;
+        /*
 
         *********************
-		*EXAM TIP: Strings are immutable. Once initialized, a String value can’t be
-		modified. All the String methods that return a modified String value return
-		a new String object with the modified value. The original String value
-		always remains the same.
+      	* EXAM TIP: If a String object is created using the keyword new, it always results
+      	  in the creation of a new String object. A new String object gets created
+      	  using the assignment operator (=) or double quotes only if a matching
+      		String object with the same value isn’t found in the String constant pool.
 
-4.1.3 Methods of the class String
-  String
-   + Query positions of char: charAt, indexOf, substring
-   + Seem to modify String:   substring, trim, replace
-   + Others:                  length, startsWith, endWith
-
-  CHARAT()
-  You can use the method charAt(int index) to retrieve a character at a specified
-  index of a String:
-*/
-    String name = new String("Paul");
-    System.out.println(name.charAt(0));
-    System.out.println(name.charAt(2));
-/*
-      @NOTE: As a quick introduction, a runtime exception is a programming error
-      determined by the Java Runtime Environment (JRE) during the execution of
-      code. These errors occur because of the inappropriate use of another piece
-      of code (exceptions are covered in detail in chapter 7). The previous code
-      tries to access a nonexistent index position, so it causes an exception.
-
-  INDEXOF()
-  You can search a String for the occurrence of a char or a String. If the specified
-  char or String is found in the target String, this method returns the first matching
-  position; otherwise, it returns -1:
-*/
-    String letters = "ABCAB";
-    System.out.println(letters.indexOf('B')); 
-    System.out.println(letters.indexOf("S")); 
-    System.out.println(letters.indexOf("CA"));
-/*
-  SUBSTRING()
-  The substring() method is shipped in two flavors. The first returns a substring of
-  a String from the position you specify to the end of the String, as in the following
-  example:
-*/
-    String exam = "Oracle";
-    String sub = exam.substring(2);
-    System.out.println(sub);
-/*
-  You can also specify the end position with this method:
-*/
-	String exam = "Oracle";
-	System.out.println(exam.substring(2));
-	System.out.println(exam.substring(2, 4));
-/*
-  An interesting point is that the substring method doesn’t include the character at the end position.
-
-        *********************
-		*EXAM TIP: The substring method doesn’t include the character at the end
-	    position in its return value.
-
-  TRIM()
-  The trim() method returns a new String by removing all the leading and trailing
-  white space in a String. White spaces are blanks (new lines, spaces, or tabs).
-*/  
-  String varWithSpaces = " AB CB ";
-	System.out.print(":");
-	System.out.print(varWithSpaces);  
-  System.out.println(":");  //Prints ": AB CB :"
-
-  System.out.print(":");
-  System.out.print(varWithSpaces.trim());
-  System.out.print(":");    //Prints ":AB CB:"
-/*
-  REPLACE()
-    This method will return a new String by replacing all the occurrences of a char with
-    another char. Instead of specifying a char to be replaced by another char, you can
-    also specify a sequence of characters—a String to be replaced by another String:
-*/
-	  String letters1 = "ABCAB";
-	  System.out.println(letters1.replace('B', 'b'));
-	  System.out.println(letters1.replace("CA", "12"));
-	  //System.out.println(letters1.replace('B', "b")); //Won't compile
-    //System.out.println(letters1.replace("B", 'b')); //Won't compile
-    System.out.println(letters1);
-/*
-	Again, notice that this method doesn’t—or can’t—change the value of the variable
-    letters. Examine the following line of code and its output:
-
-  LENGTH()
-    You can use the length() method to retrieve the length of a String. Here’s an example
-    showing its use:
-*/
-	  System.out.println("Shreya".length()); //Prints 6
-/*
-	  *********************
-		*EXAM TIP: The length of a String is one number greater than the position
-		that stores its last character. The length of String "Shreya" is 6, but its last
-		character, a, is stored at position 5 because the positions start at 0, not 1.
-
-  STARTSWITH() AND ENDSWITH()
-    The method startsWith() determines whether a String starts with a specified prefix,
-    specified as a String. You can also specify whether you wish to search from the start of
-    a String or from a particular position. This method returns true if a match is found
-    and false otherwise:
-*/
-	  String letters2 = "ABCAB";
-	  System.out.println(letters2.startsWith("AB"));
-	  System.out.println(letters2.startsWith("a"));
-    System.out.println(letters2.startsWith("A", 3));
-/*
-  METHOD CHAINING
-    It’s common practice to use multiple String methods in a single line of code, as follows:
-*/
-      String result = "Sunday ".replace(' ', 'Z').trim().concat("M n");
-      System.out.println(result);
-/*
-	The methods are evaluated from left to right. The first method to execute in this
-    example is replace, not concat.
-	
-		*********************
-		*EXAM TIP: When chained, the methods are evaluated from left to right.
-
-    Note that there’s a difference between calling a chain of methods on a String object
-    versus doing the same and then reassigning the return value to the same variable:
-*/
-	  String day = "SunDday";
-	  day.replace('D', 'Z').substring(3);
-      System.out.println(day); //Prints SunDday
-
-	  day = day.replace('D', 'Z').substring(3);
-      System.out.println(day); //Prints SunZday
-/*
-4.1.4 String objects and operators
-  Of all the operators that are on this exam, you can use just a handful with the
-  String objects:
-   - Concatenation: + and +=
-   - Equality: == and !=
-   
-  Concatenation operators (+ and +=) have a special meaning for Strings. The Java
-  language has additional functionality defined for these operators for String. You can
-  use the operators + and += to concatenate two String values.
-*/  
-    int num = 10;
-	  int val = 12;
-    String aStr = "OCJA";
-    String anotherStr = num + val + aStr;
-    System.out.println(anotherStr);  //Prints 22OCJA
-/*  
-  If you wish to treat the numbers stored in variables num and val as String values, modify
-  the expression as follows:
-*/
-  anotherStr = "" + num + val + aStr;
-	System.out.println(anotherStr);  //Prints 1012OCJA
-
-/***A practical tip on String concatenation*/
-	anotherStr = "" + (num + val) + aStr;
-	System.out.println(anotherStr);  //Prints 22OCJA
-
-/**Null values?*/
-  String lang = "Java";
-	lang += " is everywhere!";
-	System.out.println(lang); //Prints Java is everywhere!
-
-	String initializedToNull = null;
-	initializedToNull += "Java";
-    System.out.println(initializedToNull);
-/*
-4.1.5 Determining equality of Strings
-  The correct way to compare two String values for equality is to use the equals
-  method defined in the String class. This method returns a true value if the object
-  being compared to it isn’t null, is a String object, and represents the same sequence
-  of characters as the object to which it’s being compared.
-*/
-    String var1 = new String("Java");
-    String var2 = new String("Java");
-    System.out.println(var1.equals(var2)); //true
-    System.out.println(var1 == var2);      //false
-
-	  String var3 = "code";
-	  String var4 = "code";
-	  System.out.println(var3.equals(var4)); //true
-	  System.out.println(var3 == var4);      //true
-/*
-  The operator == compares whether the reference variables refer to the same objects, and the method equals compares 
-  the String values for equality. Always use the equals method to compare two Strings for equality. 
-  Never use the == operator for this purpose. 
+      4.1.2 The class String is immutable
+        The concept that the class String is immutable is an important point to remember.
+        Once created, the contents of an object of the class String can never be modified.
+        The immutability of String objects helps the JVM reuse String objects, reducing
+        memory overhead and increasing performance.
   
-  You can use the operator != to compare the inequality of objects referred to by the
-  String variables. It’s the inverse of the operator ==.
-*/
-    String var1 = new String("Java");
-    String var2 = new String("Java");
-    System.out.println(var1.equals(var2)); //true
-    System.out.println(var1 == var2);      //false
-    System.out.println(var1 != var2);      //true
-	
-	  String var3 = "code";
-	  String var4 = "code";
-	  System.out.println(var3.equals(var4)); //true
-	  System.out.println(var3 == var4);      //true
-	  System.out.println(var3 != var4);      //false
+        Let’s take a quick look at how the immutability of class String is implemented by
+        the authors of this class:
+          - The class String stores its values in a private variable of the type char array
+            (char value[]). Arrays are fixed in size and don’t grow once initialized.
+          - This value variable is marked as final in the class String. Note that final is a
+            nonaccess modifier, and a final variable can be initialized only once.
+          - None of the methods defined in the class String manipulate the individual elements
+            of the array value.
+          */
+      	   public final class String
+               implements java.io.Serializable, Comparable<String>, CharSequence
+            {
+              private final char value[];
+        	  
+      	    //The rest of the code of the class String
+            }
+          /*
+
+        STRING USES A CHAR ARRAY TO STORE ITS VALUE
+          The String value is stored in an array of type char. Remember that an array stores its first
+          value at position 0.
+  
+        STRING USES FINAL VARIABLE TO STORE ITS VALUE
+          The variable value, which is used to store the value of a String object, is marked as final. 
+          The basic characteristic of a final variable is that it can initialize a value only once.
+          
+        METHODS OF STRING DON’T MODIFY THE CHAR ARRAY
+          Although we can’t reassign a value to a final char array we can reassign its individual characters.
+          All the methods defined in the class String, such as substring, concat, toLowerCase,
+          toUpperCase, trim, and so on, which seem to modify the contents of the String object on
+          which they’re called, create and return a new String object, rather than modifying the
+          existing value.
+  
+                *********************
+      		  *EXAM TIP: Strings are immutable. Once initialized, a String value can’t be
+      		  modified. All the String methods that return a modified String value return
+      		  a new String object with the modified value. The original String value
+      		  always remains the same.
+
+      4.1.3 Methods of the class String
+        String
+         + Query positions of char: charAt, indexOf, substring
+         + Seem to modify String:   substring, trim, replace
+         + Others:                  length, startsWith, endWith
+
+        CHARAT()
+          You can use the method charAt(int index) to retrieve a character at a specified
+          index of a String:
+          */
+            String name = new String("Paul");
+            System.out.println(name.charAt(0));
+            System.out.println(name.charAt(2));
+          /*
+            @NOTE: As a quick introduction, a runtime exception is a programming error
+            determined by the Java Runtime Environment (JRE) during the execution of
+            code. These errors occur because of the inappropriate use of another piece
+            of code (exceptions are covered in detail in chapter 7). The previous code
+            tries to access a nonexistent index position, so it causes an exception.
+
+        INDEXOF()
+          You can search a String for the occurrence of a char or a String. If the specified
+          char or String is found in the target String, this method returns the first matching
+          position; otherwise, it returns -1:
+          */
+            String letters = "ABCAB";
+            System.out.println(letters.indexOf('B')); 
+            System.out.println(letters.indexOf("S")); 
+            System.out.println(letters.indexOf("CA"));
+          /*
+        SUBSTRING()
+          The substring() method is shipped in two flavors. The first returns a substring of
+          a String from the position you specify to the end of the String, as in the following
+          example:
+          */
+            String exam = "Oracle";
+            String sub = exam.substring(2);
+            System.out.println(sub);
+          /*
+        You can also specify the end position with this method:
+      */
+      	String exam = "Oracle";
+      	System.out.println(exam.substring(2));
+      	System.out.println(exam.substring(2, 4));
+      /*
+        An interesting point is that the substring method doesn’t include the character at the end position.
+
+              *********************
+      		*EXAM TIP: The substring method doesn’t include the character at the end
+      	    position in its return value.
+
+        TRIM()
+        The trim() method returns a new String by removing all the leading and trailing
+        white space in a String. White spaces are blanks (new lines, spaces, or tabs).
+      */  
+        String varWithSpaces = " AB CB ";
+      	System.out.print(":");
+      	System.out.print(varWithSpaces);  
+        System.out.println(":");  //Prints ": AB CB :"
+
+        System.out.print(":");
+        System.out.print(varWithSpaces.trim());
+        System.out.print(":");    //Prints ":AB CB:"
+      /*
+        REPLACE()
+          This method will return a new String by replacing all the occurrences of a char with
+          another char. Instead of specifying a char to be replaced by another char, you can
+          also specify a sequence of characters—a String to be replaced by another String:
+      */
+      	  String letters1 = "ABCAB";
+      	  System.out.println(letters1.replace('B', 'b'));
+      	  System.out.println(letters1.replace("CA", "12"));
+      	  //System.out.println(letters1.replace('B', "b")); //Won't compile
+          //System.out.println(letters1.replace("B", 'b')); //Won't compile
+          System.out.println(letters1);
+      /*
+      	Again, notice that this method doesn’t—or can’t—change the value of the variable
+          letters. Examine the following line of code and its output:
+
+        LENGTH()
+          You can use the length() method to retrieve the length of a String. Here’s an example
+          showing its use:
+      */
+      	  System.out.println("Shreya".length()); //Prints 6
+      /*
+      	  *********************
+      		*EXAM TIP: The length of a String is one number greater than the position
+      		that stores its last character. The length of String "Shreya" is 6, but its last
+      		character, a, is stored at position 5 because the positions start at 0, not 1.
+
+        STARTSWITH() AND ENDSWITH()
+          The method startsWith() determines whether a String starts with a specified prefix,
+          specified as a String. You can also specify whether you wish to search from the start of
+          a String or from a particular position. This method returns true if a match is found
+          and false otherwise:
+      */
+      	  String letters2 = "ABCAB";
+      	  System.out.println(letters2.startsWith("AB"));
+      	  System.out.println(letters2.startsWith("a"));
+          System.out.println(letters2.startsWith("A", 3));
+      /*
+        METHOD CHAINING
+          It’s common practice to use multiple String methods in a single line of code, as follows:
+      */
+            String result = "Sunday ".replace(' ', 'Z').trim().concat("M n");
+            System.out.println(result);
+      /*
+      	The methods are evaluated from left to right. The first method to execute in this
+          example is replace, not concat.
+      	
+      		*********************
+      		*EXAM TIP: When chained, the methods are evaluated from left to right.
+
+          Note that there’s a difference between calling a chain of methods on a String object
+          versus doing the same and then reassigning the return value to the same variable:
+      */
+      	  String day = "SunDday";
+      	  day.replace('D', 'Z').substring(3);
+            System.out.println(day); //Prints SunDday
+
+      	  day = day.replace('D', 'Z').substring(3);
+            System.out.println(day); //Prints SunZday
+      /*
+      4.1.4 String objects and operators
+        Of all the operators that are on this exam, you can use just a handful with the
+        String objects:
+         - Concatenation: + and +=
+         - Equality: == and !=
+         
+        Concatenation operators (+ and +=) have a special meaning for Strings. The Java
+        language has additional functionality defined for these operators for String. You can
+        use the operators + and += to concatenate two String values.
+      */  
+          int num = 10;
+      	  int val = 12;
+          String aStr = "OCJA";
+          String anotherStr = num + val + aStr;
+          System.out.println(anotherStr);  //Prints 22OCJA
+      /*  
+        If you wish to treat the numbers stored in variables num and val as String values, modify
+        the expression as follows:
+      */
+        anotherStr = "" + num + val + aStr;
+      	System.out.println(anotherStr);  //Prints 1012OCJA
+
+      /***A practical tip on String concatenation*/
+      	anotherStr = "" + (num + val) + aStr;
+      	System.out.println(anotherStr);  //Prints 22OCJA
+
+      /**Null values?*/
+        String lang = "Java";
+      	lang += " is everywhere!";
+      	System.out.println(lang); //Prints Java is everywhere!
+
+      	String initializedToNull = null;
+      	initializedToNull += "Java";
+          System.out.println(initializedToNull);
+      /*
+      4.1.5 Determining equality of Strings
+        The correct way to compare two String values for equality is to use the equals
+        method defined in the String class. This method returns a true value if the object
+        being compared to it isn’t null, is a String object, and represents the same sequence
+        of characters as the object to which it’s being compared.
+      */
+          String var1 = new String("Java");
+          String var2 = new String("Java");
+          System.out.println(var1.equals(var2)); //true
+          System.out.println(var1 == var2);      //false
+
+      	  String var3 = "code";
+      	  String var4 = "code";
+      	  System.out.println(var3.equals(var4)); //true
+      	  System.out.println(var3 == var4);      //true
+      /*
+        The operator == compares whether the reference variables refer to the same objects, and the method equals compares 
+        the String values for equality. Always use the equals method to compare two Strings for equality. 
+        Never use the == operator for this purpose. 
+        
+        You can use the operator != to compare the inequality of objects referred to by the
+        String variables. It’s the inverse of the operator ==.
+      */
+          String var1 = new String("Java");
+          String var2 = new String("Java");
+          System.out.println(var1.equals(var2)); //true
+          System.out.println(var1 == var2);      //false
+          System.out.println(var1 != var2);      //true
+      	
+      	  String var3 = "code";
+      	  String var4 = "code";
+      	  System.out.println(var3.equals(var4)); //true
+      	  System.out.println(var3 == var4);      //true
+      	  System.out.println(var3 != var4);      //false
 /*
 4.2 Mutable strings: StringBuilder
   The class StringBuilder is defined in the package java.lang and it has a mutable
